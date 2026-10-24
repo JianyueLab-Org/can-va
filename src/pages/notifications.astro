@@ -1,0 +1,27 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import NotificationFeed from "@/components/NotificationFeed.vue";
+import { getLocale, getMessages, useTranslations } from "@/lib/i18n";
+import { getVa } from "@/server/canVa";
+import type { Page, VaNotification } from "@/lib/va";
+
+const locale = getLocale(Astro.cookies);
+const t = useTranslations(locale, "notifications");
+const first = await getVa<Page<VaNotification>>(
+  Astro,
+  "/api/v1/va/notifications",
+);
+---
+
+<AppLayout title={t("title")}>
+  <div class="w-full">
+    <PageHeader title={t("title")} description={t("description")} />
+    <NotificationFeed
+      initial={first ?? { items: [], next: null }}
+      messages={getMessages(locale, "notifications")}
+      common={getMessages(locale, "common")}
+      client:load
+    />
+  </div>
+</AppLayout>
