@@ -1,0 +1,40 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import AirlineFrame from "@/components/AirlineFrame.astro";
+import LedgerTable from "@/components/LedgerTable.vue";
+import { getLocale, getMessages, useTranslations } from "@/lib/i18n";
+import { currentMe } from "@/server/session";
+import { getVa } from "@/server/canVa";
+import { loadAirlinePage } from "@/server/airlinePage";
+import { can } from "@/lib/permissions";
+import type { LedgerPage } from "@/lib/va";
+
+/** 财务只给 `finance.view`。 */
+const me = currentMe(Astro.locals);
+const page = await loadAirlinePage(Astro, Astro.params.icao, me);
+if (!page || !can(page.membership, "finance.view")) {
+  return Astro.rewrite("/404");
+}
+
+const locale = getLocale(Astro.cookies);
+const t = useTranslations(locale, "finance");
+const ledger = await getVa<LedgerPage>(
+  Astro,
+  `/api/v1/va/airlines/${page.icao}/ledger?limit=50`,
+);
+if (!ledger) return Astro.rewrite("/404");
+---
+
+<AppLayout title={`${t("title")} · ${page.airline.name}`}>
+  <AirlineFrame page={page} current="finance" description={t("description")}>
+    <LedgerTable
+      icao={page.icao}
+      locale={locale}
+      initial={ledger}
+      negativeSince={page.airline.negativeSince ?? null}
+      messages={getMessages(locale, "finance")}
+      common={getMessages(locale, "common")}
+      client:load
+    />
+  </AirlineFrame>
+</AppLayout>
