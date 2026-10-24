@@ -1,0 +1,166 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import Badge from "@jianyuelab-org/can-ui/components/Badge.vue";
+import EmptyState from "@jianyuelab-org/can-ui/components/EmptyState.vue";
+import { getLocale, useTranslations } from "@/lib/i18n";
+import { currentMe } from "@/server/session";
+import { getVa } from "@/server/canVa";
+import { notificationLine } from "@/lib/notifications";
+import { formatCredits, formatUtc } from "@/lib/format";
+import type { Page, VaNotification } from "@/lib/va";
+
+/**
+ * 首页：我的航司、飞行员档案、成立申请、最新五条通知。全部服务端渲染；没有岛屿。
+ */
+const me = currentMe(Astro.locals);
+const locale = getLocale(Astro.cookies);
+const t = useTranslations(locale, "home");
+const tc = useTranslations(locale, "common");
+const tn = useTranslations(locale, "notifications");
+
+const recent = await getVa<Page<VaNotification>>(
+  Astro,
+  "/api/v1/va/notifications?limit=5",
+);
+const lines = (recent?.items ?? []).map((n) => ({
+  ...notificationLine(n, tn),
+  id: n.id,
+  read: n.read,
+  createdAt: n.createdAt,
+}));
+const memberships = [...me.memberships].sort(
+  (a, b) => Number(b.isPrimary) - Number(a.isPrimary),
+);
+const pending = me.pendingApplication;
+---
+
+<AppLayout>
+  <div class="w-full">
+    <PageHeader title={t("title")} description={t("description")} />
+
+    <div class="grid gap-6 lg:grid-cols-3">
+      <section class="card p-5 lg:col-span-2" aria-labelledby="mine-title">
+        <h2 id="mine-title" class="text-title-3 mb-3 text-ink">
+          {t("airlines.title")}
+        </h2>
+        {
+          memberships.length === 0 ? (
+            <EmptyState
+              compact
+              title={t("airlines.empty")}
+              icon="buildingOffice"
+            >
+              <a slot="action" href="/airlines" class="btn btn-secondary mt-3">
+                {t("airlines.browse")}
+              </a>
+            </EmptyState>
+          ) : (
+            <ul class="divide-y divide-subtle">
+              {memberships.map((m) => (
+                <li class="flex items-center justify-between gap-3 py-3">
+                  <a
+                    href={`/airlines/${m.airline.icao}`}
+                    class="min-w-0 font-medium text-ink hover:underline"
+                  >
+                    <span class="font-mono">{m.airline.icao}</span>
+                    <span class="ml-2">{m.airline.name}</span>
+                  </a>
+                  <span class="flex shrink-0 gap-2">
+                    {m.isPrimary && (
+                      <Badge variant="info">{tc("primary")}</Badge>
+                    )}
+                    {m.isOwner && (
+                      <Badge variant="success">{tc("owner")}</Badge>
+                    )}
+                    {m.status !== "active" && (
+                      <Badge variant="warning">
+                        {tc(`membershipStatus.${m.status}`)}
+                      </Badge>
+                    )}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </section>
+
+      <section class="card p-5" aria-labelledby="pilot-title">
+        <h2 id="pilot-title" class="text-title-3 mb-3 text-ink">
+          {t("pilot.title")}
+        </h2>
+        {
+          me.pilot ? (
+            <dl class="grid grid-cols-2 gap-3 text-sm">
+              <dt class="text-muted">{t("pilot.location")}</dt>
+              <dd class="font-mono text-ink">{me.pilot.locationIcao}</dd>
+              <dt class="text-muted">{t("pilot.wallet")}</dt>
+              <dd class="tabular-nums text-ink">
+                {formatCredits(me.pilot.wallet, locale)}
+              </dd>
+            </dl>
+          ) : (
+            <p class="text-sm text-muted">{t("pilot.none")}</p>
+          )
+        }
+      </section>
+
+      <section class="card p-5 lg:col-span-2" aria-labelledby="recent-title">
+        <div class="mb-3 flex items-center justify-between">
+          <h2 id="recent-title" class="text-title-3 text-ink">
+            {t("notifications.title")}
+          </h2>
+          <a href="/notifications" class="text-sm text-can hover:underline">
+            {t("notifications.all")}
+          </a>
+        </div>
+        {
+          lines.length === 0 ? (
+            <p class="text-sm text-muted">{t("notifications.empty")}</p>
+          ) : (
+            <ul class="divide-y divide-subtle">
+              {lines.map((line) => (
+                <li class="flex items-baseline justify-between gap-3 py-2.5">
+                  <a
+                    href={line.href}
+                    class:list={[
+                      "min-w-0 text-sm hover:underline",
+                      line.read ? "text-muted" : "font-medium text-ink",
+                    ]}
+                  >
+                    {line.text}
+                  </a>
+                  <span class="shrink-0 text-xs tabular-nums text-faint">
+                    {formatUtc(line.createdAt)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </section>
+
+      <section class="card p-5" aria-labelledby="apply-title">
+        <h2 id="apply-title" class="text-title-3 mb-3 text-ink">
+          {t("application.title")}
+        </h2>
+        {
+          pending ? (
+            <p class="text-sm text-ink">
+              {t("application.pending", {
+                name: pending.name,
+                icao: pending.icao,
+              })}
+            </p>
+          ) : (
+            <p class="text-sm text-muted">{t("application.none")}</p>
+          )
+        }
+        <a href="/apply" class="btn btn-secondary mt-4">
+          {pending ? t("application.view") : t("application.cta")}
+        </a>
+      </section>
+    </div>
+  </div>
+</AppLayout>

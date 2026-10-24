@@ -1,0 +1,22 @@
+---
+import { NotFound } from "@jianyuelab-org/can-ui";
+import AppLayout from "@/layouts/AppLayout.astro";
+import { getLocale, useTranslations } from "@/lib/i18n";
+import { SITE_ORIGINS } from "@/lib/nav";
+
+/**
+ * 找不到的页面 —— 也是没有权限的人打开航司设置、成员、财务时看到的那一页（那几页在
+ * frontmatter 里 `rewrite("/404")`）。
+ */
+const locale = getLocale(Astro.cookies);
+const t = useTranslations(locale, "notFound");
+Astro.response.status = 404;
+---
+
+<AppLayout title="404">
+  <NotFound current="va" locale={locale} origins={SITE_ORIGINS}>
+    <a slot="actions" href="/airlines" class="btn btn-secondary px-5 py-2.5">
+      {t("airlines")}
+    </a>
+  </NotFound>
+</AppLayout>

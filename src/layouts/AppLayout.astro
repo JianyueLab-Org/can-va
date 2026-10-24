@@ -1,0 +1,62 @@
+---
+import "@/styles/globals.css";
+import ThemeScript from "@jianyuelab-org/can-ui/components/ThemeScript.astro";
+import Frame from "@/components/Frame.vue";
+import { getLocale, getMessages, useTranslations } from "@/lib/i18n";
+import { buildNavigation, SITE_ORIGINS } from "@/lib/nav";
+import { pageTitle } from "@/lib/pageTitle";
+
+interface Props {
+  title?: string;
+}
+const { title } = Astro.props;
+
+const locale = getLocale(Astro.cookies);
+const me = Astro.locals.me;
+const navigation = buildNavigation(
+  useTranslations(locale),
+  me?.memberships ?? [],
+);
+/** 账户菜单显示名字和 `#CID`。 */
+const frameUser = me
+  ? { name: me.name, id: me.username, rating: me.rating }
+  : null;
+---
+
+<!doctype html>
+<html lang={locale} class="antialiased">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#ffffff"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#0b0f14"
+    />
+    <!-- 整站要登录，没有可索引的页面。 -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{pageTitle(title, locale)}</title>
+    <ThemeScript />
+  </head>
+  <body>
+    <Frame
+      locale={locale}
+      pathname={Astro.originPathname}
+      nav={navigation}
+      user={frameUser}
+      messages={getMessages(locale, "frame")}
+      origins={SITE_ORIGINS}
+      client:load
+    >
+      <slot />
+    </Frame>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+---
+/**
+ * 页面的标题区，每一页都从它开始。字号用 can-ui 的 `.text-title-1`；说明限 `max-w-2xl`。
+ * `back` 给挂在别的页面下面的页面。
+ */
+import Icon from "@jianyuelab-org/can-ui/components/Icon.vue";
+
+interface Props {
+  title: string;
+  description?: string;
+  eyebrow?: string;
+  back?: { href: string; label: string };
+}
+
+const { title, description, eyebrow, back } = Astro.props;
+---
+
+<header
+  class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
+>
+  <div class="min-w-0">
+    {
+      back && (
+        <a
+          href={back.href}
+          class="mb-2 inline-flex items-center gap-1 rounded-control text-sm text-muted transition-colors hover:text-ink focus-visible:shadow-[var(--ring-brand)] focus-visible:outline-none"
+        >
+          <Icon name="arrowLeft" class="size-3.5" />
+          {back.label}
+        </a>
+      )
+    }
+    {eyebrow && <p class="text-eyebrow mb-1.5 text-can">{eyebrow}</p>}
+    <h1 class="text-title-1 text-ink">
+      <slot name="title">{title}</slot>
+    </h1>
+    {description && <p class="mt-2 max-w-2xl text-muted">{description}</p>}
+  </div>
+  {
+    Astro.slots.has("actions") && (
+      <div class="flex shrink-0 flex-wrap items-center gap-3">
+        <slot name="actions" />
+      </div>
+    )
+  }
+</header>
