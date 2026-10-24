@@ -1,12 +1,16 @@
 import { describe, expect, test } from "bun:test";
 import {
   createUnreadPoller,
+  STOP_POLLING,
   UNREAD_POLL_MS,
   type Interval,
   type Visibility,
 } from "./unreadPoller";
 
-function harness(visible: boolean, counts: Array<number | null> = [3]) {
+function harness(
+  visible: boolean,
+  counts: Array<number | null | typeof STOP_POLLING> = [3],
+) {
   let isVisible = visible;
   const listeners = new Set<() => void>();
   const visibility: Visibility = {
@@ -100,5 +104,21 @@ describe("createUnreadPoller", () => {
     h.poller.stop();
     expect(h.timers.size).toBe(0);
     expect(h.listeners.size).toBe(0);
+  });
+
+  test("a 401 (STOP_POLLING) zeroes the count and stops further fetches", async () => {
+    const h = harness(true, [4, STOP_POLLING, 7]);
+    h.poller.start();
+    await flush();
+    h.tick();
+    await flush();
+    expect(h.seen).toEqual([4, 0]);
+    expect(h.timers.size).toBe(0);
+    expect(h.listeners.size).toBe(0);
+    h.setVisible(false);
+    h.setVisible(true);
+    h.tick();
+    await flush();
+    expect(h.fetches()).toBe(2);
   });
 });

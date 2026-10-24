@@ -26,9 +26,12 @@ export interface UnreadPoller {
   stop(): void;
 }
 
+/** fetchCount 返回它：登录已失效（401），停止轮询并清零，直到下次导航。 */
+export const STOP_POLLING = Symbol("stopPolling");
+
 export function createUnreadPoller(options: {
-  /** null：这一次没取到，数字不动。 */
-  fetchCount: () => Promise<number | null>;
+  /** null：这一次没取到，数字不动。`STOP_POLLING`：清零并停止。 */
+  fetchCount: () => Promise<number | null | typeof STOP_POLLING>;
   onCount: (count: number) => void;
   visibility: Visibility;
   interval: Interval;
@@ -41,7 +44,11 @@ export function createUnreadPoller(options: {
 
   async function tick(): Promise<void> {
     const count = await options.fetchCount();
-    if (running && count !== null) options.onCount(count);
+    if (!running) return;
+    if (count === STOP_POLLING) {
+      stop();
+      options.onCount(0);
+    } else if (count !== null) options.onCount(count);
   }
 
   function resume(): void {
@@ -61,6 +68,13 @@ export function createUnreadPoller(options: {
     else pause();
   }
 
+  function stop(): void {
+    running = false;
+    pause();
+    unsubscribe?.();
+    unsubscribe = null;
+  }
+
   return {
     start() {
       if (running) return;
@@ -68,12 +82,7 @@ export function createUnreadPoller(options: {
       unsubscribe = options.visibility.subscribe(sync);
       sync();
     },
-    stop() {
-      running = false;
-      pause();
-      unsubscribe?.();
-      unsubscribe = null;
-    },
+    stop,
   };
 }
 

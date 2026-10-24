@@ -26,11 +26,29 @@ export interface NotificationLine {
   known: boolean;
 }
 
-/** 只放行站内路径。`//host` 和带反斜杠的会被浏览器当成跨站。 */
+const PROBE_ORIGIN = "https://va.invalid";
+const CONTROL = /[\u0000-\u001F\u007F]/;
+
+/**
+ * 只放行站内路径。`//host`、带反斜杠或控制字符的（浏览器会剥掉 `\t` `\n`）会被当成跨站；
+ * 最后按固定 origin 解析一遍，origin 变了也不放行。
+ */
 export function safePath(path: string): string {
-  return path.startsWith("/") && !path.startsWith("//") && !path.includes("\\")
-    ? path
-    : "/notifications";
+  if (
+    !path.startsWith("/") ||
+    path.startsWith("//") ||
+    path.includes("\\") ||
+    CONTROL.test(path)
+  ) {
+    return "/notifications";
+  }
+  try {
+    return new URL(path, PROBE_ORIGIN).origin === PROBE_ORIGIN
+      ? path
+      : "/notifications";
+  } catch {
+    return "/notifications";
+  }
 }
 
 const KIND = /^[a-z0-9_]+(\.[a-z0-9_]+)*$/;

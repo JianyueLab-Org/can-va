@@ -14,6 +14,7 @@ import { notificationBadgeText } from "@jianyuelab-org/can-ui";
 import { createTranslator } from "@jianyuelab-org/can-ui/i18n";
 import { va } from "@/lib/va";
 import {
+  STOP_POLLING,
   createUnreadPoller,
   documentVisibility,
   READ_EVENT,
@@ -40,6 +41,7 @@ onMounted(() => {
   poller = createUnreadPoller({
     fetchCount: async () => {
       const result = await va.unreadCount();
+      if (!result.ok && result.status === 401) return STOP_POLLING;
       return result.ok && typeof result.data?.count === "number"
         ? result.data.count
         : null;
