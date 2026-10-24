@@ -1,0 +1,2 @@
+/* can-va 的样式表。设计系统在 can-ui；本站独有的规则写在这行 import 之后。 */
+@import "@jianyuelab-org/can-ui/styles";

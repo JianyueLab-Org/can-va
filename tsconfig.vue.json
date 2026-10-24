@@ -1,0 +1,9 @@
+{
+  // `astro check` does not type-check Vue SFCs; vue-tsc covers them.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [".astro/types.d.ts", "src/**/*.ts", "src/**/*.vue"],
+  "exclude": ["node_modules", "dist"]
+}
