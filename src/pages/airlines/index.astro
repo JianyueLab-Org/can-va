@@ -1,0 +1,27 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import AirlineDirectory from "@/components/AirlineDirectory.vue";
+import { getLocale, getMessages, useTranslations } from "@/lib/i18n";
+import { getVa } from "@/server/canVa";
+import type { AirlineSummary } from "@/lib/va";
+
+const locale = getLocale(Astro.cookies);
+const t = useTranslations(locale, "airlines");
+const list = await getVa<{ items: AirlineSummary[] }>(
+  Astro,
+  "/api/v1/va/airlines",
+);
+---
+
+<AppLayout title={t("title")}>
+  <div class="w-full">
+    <PageHeader title={t("title")} description={t("description")} />
+    <AirlineDirectory
+      initial={list?.items ?? []}
+      messages={getMessages(locale, "airlines")}
+      common={getMessages(locale, "common")}
+      client:load
+    />
+  </div>
+</AppLayout>

@@ -1,0 +1,58 @@
+---
+/**
+ * 航司各页的公共外框：标题（航司名，ICAO 作眉题）、暂停提示、分页标签。
+ * 标签按成员身份和权限出现（`airlineSections`）；页面自己的门槛在各页 frontmatter 里。
+ */
+import PageHeader from "@/components/PageHeader.astro";
+import AlertBox from "@jianyuelab-org/can-ui/components/AlertBox.vue";
+import { getLocale, useTranslations } from "@/lib/i18n";
+import { airlineSections, type AirlineSection } from "@/lib/permissions";
+import type { AirlinePage } from "@/server/airlinePage";
+
+interface Props {
+  page: AirlinePage;
+  current: AirlineSection;
+  description?: string;
+}
+const { page, current, description } = Astro.props;
+const t = useTranslations(getLocale(Astro.cookies), "airline");
+const sections = airlineSections(page.icao, page.membership);
+---
+
+<div class="w-full">
+  <PageHeader
+    title={page.airline.name}
+    eyebrow={page.icao}
+    description={description}
+    back={{ href: "/airlines", label: t("back") }}
+  />
+  {
+    page.airline.status === "suspended" && (
+      <AlertBox variant="warning" class="mb-6">
+        {t("suspended")}
+      </AlertBox>
+    )
+  }
+  <nav
+    class="mb-6 flex gap-1 overflow-x-auto border-b border-subtle"
+    aria-label={page.airline.name}
+  >
+    {
+      sections.map((section) => (
+        <a
+          href={section.href}
+          aria-current={section.key === current ? "page" : undefined}
+          class:list={[
+            "-mb-px whitespace-nowrap border-b-2 px-3 py-2 text-sm transition-colors",
+            section.key === current
+              ? "border-[var(--color-can)] font-medium text-ink"
+              : "border-transparent text-muted hover:text-ink",
+          ]}
+        >
+          {t(`sections.${section.key}`)}
+        </a>
+      ))
+    }
+  </nav>
+  <slot />
+</div>

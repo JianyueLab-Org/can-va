@@ -1,0 +1,131 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import AirlineFrame from "@/components/AirlineFrame.astro";
+import MembershipActions from "@/components/MembershipActions.vue";
+import Badge from "@jianyuelab-org/can-ui/components/Badge.vue";
+import { getLocale, getMessages, useTranslations } from "@/lib/i18n";
+import { currentMe } from "@/server/session";
+import { getVa } from "@/server/canVa";
+import { loadAirlinePage } from "@/server/airlinePage";
+import { formatCredits, formatDay } from "@/lib/format";
+import type { Rank } from "@/lib/va";
+
+/** 航司概况：谁都看得到（只有运营中和暂停的航司能打开）。 */
+const me = currentMe(Astro.locals);
+const page = await loadAirlinePage(Astro, Astro.params.icao, me);
+if (!page) return Astro.rewrite("/404");
+
+const locale = getLocale(Astro.cookies);
+const t = useTranslations(locale, "airline");
+const tc = useTranslations(locale, "common");
+const tr = useTranslations(locale, "ranks");
+const ranks = await getVa<{ items: Rank[] }>(
+  Astro,
+  `/api/v1/va/airlines/${page.icao}/ranks`,
+);
+const sortedRanks = [...(ranks?.items ?? [])].sort(
+  (a, b) => a.position - b.position,
+);
+const a = page.airline;
+const facts: Array<[string, string]> = [
+  [t("facts.telephony"), a.telephony],
+  [t("facts.joinMode"), tc(`joinMode.${a.joinMode}`)],
+  [t("facts.hubs"), a.hubs.join(" ")],
+  [t("facts.owner"), a.owner ?? tc("none")],
+  [t("facts.members"), String(a.memberCount)],
+  [t("facts.created"), formatDay(a.createdAt)],
+  [t("facts.offline"), a.allowOfflinePireps ? t("allowed") : t("notAllowed")],
+  [t("facts.freeFlights"), a.allowFreeFlights ? t("allowed") : t("notAllowed")],
+];
+---
+
+<AppLayout title={a.name}>
+  <AirlineFrame page={page} current="overview">
+    <div class="grid gap-6 lg:grid-cols-3">
+      <section class="card p-5 lg:col-span-2">
+        <h2 class="text-title-3 mb-3 text-ink">{t("about")}</h2>
+        <p class="whitespace-pre-line text-sm text-ink">
+          {a.description || t("noDescription")}
+        </p>
+        <dl
+          class="mt-5 grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-4"
+        >
+          {
+            facts.map(([label, value]) => (
+              <div>
+                <dt class="text-muted">{label}</dt>
+                <dd class="text-ink">{value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
+      <section class="card p-5">
+        <div class="mb-3 flex items-center gap-2">
+          <h2 class="text-title-3 text-ink">{a.icao}</h2>
+          <Badge variant={a.status === "active" ? "success" : "warning"}>
+            {tc(`status.${a.status}`)}
+          </Badge>
+        </div>
+        <MembershipActions
+          airline={{
+            icao: a.icao,
+            name: a.name,
+            joinMode: a.joinMode,
+            status: a.status,
+          }}
+          membership={page.membership}
+          messages={getMessages(locale, "airline")}
+          common={getMessages(locale, "common")}
+          client:load
+        />
+      </section>
+
+      <section class="card p-5 lg:col-span-3">
+        <h2 class="text-title-3 mb-3 text-ink">{t("ranksTitle")}</h2>
+        {
+          sortedRanks.length === 0 ? (
+            <p class="text-sm text-muted">{tr("empty")}</p>
+          ) : (
+            <table class="data-table w-full text-sm">
+              <thead>
+                <tr>
+                  <th class="text-left">{tr("columns.name")}</th>
+                  <th class="text-right">{tr("columns.minHours")}</th>
+                  <th class="text-right">{tr("columns.minFlights")}</th>
+                  <th class="text-right">{tr("columns.payPerHr")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedRanks.map((rank) => (
+                  <tr>
+                    <td data-label={tr("columns.name")}>{rank.name}</td>
+                    <td
+                      data-label={tr("columns.minHours")}
+                      class="text-right tabular-nums"
+                    >
+                      {rank.minHours}
+                    </td>
+                    <td
+                      data-label={tr("columns.minFlights")}
+                      class="text-right tabular-nums"
+                    >
+                      {rank.minFlights}
+                    </td>
+                    <td
+                      data-label={tr("columns.payPerHr")}
+                      class="text-right tabular-nums"
+                    >
+                      {formatCredits(rank.payPerHr, locale)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )
+        }
+      </section>
+    </div>
+  </AirlineFrame>
+</AppLayout>
