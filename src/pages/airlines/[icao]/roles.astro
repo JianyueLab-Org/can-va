@@ -1,0 +1,39 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import AirlineFrame from "@/components/AirlineFrame.astro";
+import RolesManager from "@/components/RolesManager.vue";
+import { getLocale, getMessages, useTranslations } from "@/lib/i18n";
+import { currentMe } from "@/server/session";
+import { getVa } from "@/server/canVa";
+import { loadAirlinePage } from "@/server/airlinePage";
+import type { Role } from "@/lib/va";
+
+/** 角色表只给活跃成员（上游 `GET roles` 的门槛）。 */
+const me = currentMe(Astro.locals);
+const page = await loadAirlinePage(Astro, Astro.params.icao, me);
+const membership = page?.membership;
+if (!page || !membership || membership.status !== "active") {
+  return Astro.rewrite("/404");
+}
+
+const locale = getLocale(Astro.cookies);
+const t = useTranslations(locale, "roles");
+const roles = await getVa<{ items: Role[] }>(
+  Astro,
+  `/api/v1/va/airlines/${page.icao}/roles`,
+);
+---
+
+<AppLayout title={`${t("title")} · ${page.airline.name}`}>
+  <AirlineFrame page={page} current="roles" description={t("description")}>
+    <RolesManager
+      icao={page.icao}
+      membership={membership}
+      roles={roles?.items ?? []}
+      messages={getMessages(locale, "roles")}
+      permissionLabels={getMessages(locale, "permissions")}
+      common={getMessages(locale, "common")}
+      client:load
+    />
+  </AirlineFrame>
+</AppLayout>
