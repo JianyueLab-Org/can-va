@@ -1,0 +1,458 @@
+{
+  "frame": {
+    "signOut": "サインアウト",
+    "search": {
+      "label": "ページを検索",
+      "placeholder": "ページへ移動…",
+      "noResults": "一致するページがありません",
+      "hint": "検索"
+    },
+    "skipToContent": "本文へスキップ",
+    "closeSidebar": "ナビゲーションを閉じる",
+    "openSidebar": "ナビゲーションを開く",
+    "signIn": "サインイン",
+    "signingOut": "サインアウト中…",
+    "signOutFailed": "サインアウトに失敗しました。もう一度お試しください。",
+    "close": "閉じる",
+    "dismiss": "通知を閉じる",
+    "sidebar": "サイドバー",
+    "openUserMenu": "ユーザーメニューを開く",
+    "openMenu": "メニューを開く",
+    "siteNavigation": "サイト内ナビゲーション",
+    "theme": {
+      "label": "外観",
+      "light": "ライト",
+      "dark": "ダーク",
+      "system": "システムに合わせる"
+    },
+    "language": {
+      "label": "言語を選択"
+    },
+    "bell": {
+      "label": "航空会社の通知",
+      "unread": "航空会社の通知：未読 {count} 件"
+    }
+  },
+  "nav": {
+    "home": "マイ航空会社",
+    "airlines": "航空会社一覧",
+    "apply": "航空会社の設立申請",
+    "notifications": "航空会社の通知",
+    "mine": "所属航空会社"
+  },
+  "notFound": {
+    "airlines": "航空会社一覧を見る"
+  },
+  "common": {
+    "loading": "読み込み中…",
+    "save": "保存",
+    "saving": "保存中…",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "delete": "削除",
+    "edit": "編集",
+    "create": "作成",
+    "loadMore": "さらに読み込む",
+    "none": "—",
+    "yes": "はい",
+    "no": "いいえ",
+    "primary": "メイン",
+    "owner": "オーナー",
+    "status": {
+      "active": "運航中",
+      "suspended": "停止中",
+      "closed": "閉鎖"
+    },
+    "membershipStatus": {
+      "applied": "申請中",
+      "invited": "招待中",
+      "active": "メンバー"
+    },
+    "joinMode": {
+      "open": "自由参加",
+      "application": "申請制",
+      "invite": "招待制"
+    },
+    "applicationStatus": {
+      "pending": "審査中",
+      "approved": "承認",
+      "rejected": "却下"
+    },
+    "errors": {
+      "network": "ネットワークエラーです。しばらくしてからお試しください。",
+      "unreachable": "航空会社サービスに接続できません。しばらくしてからお試しください。",
+      "not_allowed": "このエンドポイントはこのサイトの転送リストにありません。",
+      "method_not_allowed": "許可されていないメソッドです。",
+      "http_error": "リクエストに失敗しました。しばらくしてからお試しください。",
+      "unauthenticated": "セッションの有効期限が切れました。ページを再読み込みしてサインインしてください。",
+      "forbidden": "この操作を行う権限がありません。",
+      "insufficient_scope": "この認証情報では航空会社の API にアクセスできません。",
+      "bad_origin": "クロスサイトリクエストは拒否されました。",
+      "not_found": "対象が見つかりません。",
+      "bad_request": "入力内容に誤りがあります。",
+      "application_pending": "審査中の申請がすでにあります。",
+      "code_taken": "ICAO、IATA またはコールサインは他の航空会社が使用しています。",
+      "airport_unavailable": "この空港は存在しないか、廃止されています。",
+      "airline_suspended": "この航空会社は停止中のため変更できません。",
+      "hub_exists": "この空港はすでにハブです。",
+      "last_hub": "ハブを少なくとも 1 つ残す必要があります。",
+      "already_member": "すでにメンバーであるか、申請または招待が保留中です。",
+      "invite_only": "この航空会社は招待制です。",
+      "owner_cannot_leave": "オーナーは所有権を譲渡してから退会してください。",
+      "not_applied": "このパイロットに保留中の参加申請はありません。",
+      "not_invited": "この航空会社からの招待はありません。",
+      "cannot_remove_owner": "オーナーは除名できません。",
+      "role_outranks": "相手のロールはあなたと同等以上です。",
+      "not_active_member": "相手はこの航空会社のアクティブなメンバーではありません。",
+      "role_name_taken": "同じ名前のロールがすでにあります。",
+      "rank_name_taken": "同じ名前のランクがすでにあります。",
+      "last_rank": "ランクを少なくとも 1 つ残す必要があります。"
+    }
+  },
+  "home": {
+    "title": "マイ航空会社",
+    "description": "所属している航空会社、設立申請、最新の通知。",
+    "pilot": {
+      "title": "パイロット",
+      "location": "現在地",
+      "wallet": "ウォレット",
+      "none": "航空会社に参加するとパイロット記録が作成されます。"
+    },
+    "airlines": {
+      "title": "マイ航空会社",
+      "empty": "まだどの航空会社にも参加していません。",
+      "browse": "航空会社一覧を見る"
+    },
+    "application": {
+      "title": "設立申請",
+      "pending": "{name}（{icao}）はプラットフォームの審査待ちです。",
+      "none": "自分の航空会社を運営しませんか？申請するとプラットフォームが審査します。",
+      "cta": "航空会社の設立申請",
+      "view": "申請を見る"
+    },
+    "notifications": {
+      "title": "最新の通知",
+      "empty": "通知はありません。",
+      "all": "すべての通知"
+    }
+  },
+  "airlines": {
+    "title": "航空会社一覧",
+    "description": "ネットワークで運航中の航空会社。",
+    "searchLabel": "航空会社を検索",
+    "searchPlaceholder": "名前、ICAO、IATA",
+    "empty": "航空会社が見つかりません。",
+    "columns": {
+      "icao": "ICAO",
+      "iata": "IATA",
+      "name": "名前",
+      "telephony": "コールサイン",
+      "joinMode": "参加方式",
+      "hubs": "ハブ",
+      "members": "メンバー"
+    }
+  },
+  "airline": {
+    "back": "航空会社一覧",
+    "sections": {
+      "overview": "概要",
+      "members": "メンバー",
+      "roles": "ロール",
+      "ranks": "ランク",
+      "manage": "設定",
+      "finance": "財務"
+    },
+    "suspended": "この航空会社はプラットフォームにより停止されています。変更はすべて拒否されます。",
+    "about": "紹介",
+    "noDescription": "この航空会社の紹介はまだありません。",
+    "facts": {
+      "telephony": "コールサイン",
+      "joinMode": "参加方式",
+      "hubs": "ハブ",
+      "owner": "オーナー",
+      "members": "メンバー",
+      "created": "設立",
+      "offline": "オフライン PIREP",
+      "freeFlights": "フリーフライト"
+    },
+    "allowed": "可",
+    "notAllowed": "不可",
+    "ranksTitle": "ランク",
+    "actions": {
+      "join": "参加する",
+      "applyJoin": "参加を申請",
+      "inviteOnly": "この航空会社は招待制です。",
+      "appliedNotice": "参加申請は審査待ちです。",
+      "invitedNotice": "この航空会社から招待されています。",
+      "acceptInvite": "招待を受ける",
+      "declineInvite": "招待を断る",
+      "setPrimary": "メインにする",
+      "isPrimary": "これはあなたのメイン航空会社です。",
+      "leave": "退会する",
+      "leaveTitle": "{name} を退会しますか？",
+      "leaveBody": "戻るには再度参加する必要があります。",
+      "ownerCannotLeave": "オーナーは所有権を譲渡してから退会してください。"
+    }
+  },
+  "manage": {
+    "title": "航空会社の設定",
+    "description": "名前、紹介、参加方式、ハブ。",
+    "settings": {
+      "title": "基本設定",
+      "name": "名前",
+      "description": "紹介",
+      "joinMode": "参加方式",
+      "offline": "オフライン PIREP を受け付ける",
+      "offlineHint": "オフにすると、ネットワーク上で飛行したフライトのみ申告できます。",
+      "free": "フリーフライトを許可",
+      "freeHint": "オンにすると、路線網外の区間も飛行できます。",
+      "saved": "保存しました。"
+    },
+    "hubs": {
+      "title": "ハブ",
+      "help": "最初のハブが新メンバーの開始地点です。",
+      "add": "ハブを追加",
+      "remove": "削除",
+      "lastHub": "ハブを少なくとも 1 つ残してください。",
+      "added": "{icao} を追加しました。",
+      "removed": "{icao} を削除しました。"
+    },
+    "owner": {
+      "title": "所有権の譲渡",
+      "help": "譲渡できるのはオーナーだけです。新オーナーはアクティブなメンバーである必要があります。",
+      "select": "新しいオーナー",
+      "transfer": "譲渡する",
+      "confirmTitle": "所有権を譲渡しますか？",
+      "confirmBody": "{name} の所有権を {username} に譲渡しますか？譲渡後はオーナーではなくなります。",
+      "done": "所有権を譲渡しました。",
+      "noCandidates": "引き継げる他のアクティブメンバーがいません。"
+    }
+  },
+  "members": {
+    "title": "メンバー",
+    "description": "メンバー、参加申請、招待。",
+    "active": {
+      "title": "メンバー",
+      "empty": "まだメンバーがいません。"
+    },
+    "applied": {
+      "title": "参加申請",
+      "empty": "保留中の参加申請はありません。"
+    },
+    "invited": {
+      "title": "招待中",
+      "empty": "返答待ちの招待はありません。"
+    },
+    "invite": {
+      "title": "パイロットを招待",
+      "help": "相手の CAN ID を入力してください。",
+      "username": "CAN ID",
+      "action": "招待を送る",
+      "sent": "{username} を招待しました。"
+    },
+    "columns": {
+      "member": "メンバー",
+      "roles": "ロール",
+      "joined": "参加日",
+      "actions": "操作"
+    },
+    "actions": {
+      "accept": "承認",
+      "decline": "却下",
+      "remove": "除名",
+      "editRoles": "ロール"
+    },
+    "removeTitle": "{username} を除名しますか？",
+    "removeBody": "この航空会社のメンバー資格を失い、進行中の予約は取り消されます。",
+    "rolesTitle": "{username} のロール",
+    "rolesHelp": "割り当てられるのは、自分の最上位ロールより下のロールだけです。",
+    "rolesNone": "割り当てられるロールがありません。",
+    "done": {
+      "accepted": "{username} を承認しました。",
+      "declined": "{username} を却下しました。",
+      "removed": "{username} を除名しました。",
+      "rolesSaved": "{username} のロールを更新しました。"
+    }
+  },
+  "roles": {
+    "title": "ロール",
+    "description": "ロールは権限の組み合わせです。上位のロールは下位のロールを管理できます。",
+    "empty": "まだロールがありません。",
+    "columns": {
+      "name": "名前",
+      "position": "序列",
+      "permissions": "権限",
+      "actions": "操作"
+    },
+    "form": {
+      "createTitle": "新しいロール",
+      "editTitle": "ロールを編集",
+      "name": "名前",
+      "position": "序列",
+      "positionHelp": "数値が大きいほど上位です。",
+      "permissions": "権限",
+      "create": "作成",
+      "save": "保存"
+    },
+    "deleteTitle": "ロール「{name}」を削除しますか？",
+    "deleteBody": "このロールを持つメンバーはその権限を失います。",
+    "created": "ロール「{name}」を作成しました。",
+    "saved": "ロール「{name}」を保存しました。",
+    "deleted": "ロール「{name}」を削除しました。"
+  },
+  "permissions": {
+    "airline": {
+      "edit": "航空会社の編集"
+    },
+    "members": {
+      "manage": "メンバー管理"
+    },
+    "roles": {
+      "manage": "ロール管理"
+    },
+    "fleet": {
+      "manage": "機材管理"
+    },
+    "routes": {
+      "manage": "路線管理"
+    },
+    "pireps": {
+      "review": "PIREP の審査"
+    },
+    "finance": {
+      "view": "財務の閲覧"
+    },
+    "ranks": {
+      "manage": "ランク管理"
+    }
+  },
+  "ranks": {
+    "title": "ランク",
+    "description": "パイロットは飛行時間とフライト数で昇格し、ランクで時給が決まります。",
+    "empty": "まだランクがありません。",
+    "columns": {
+      "name": "名前",
+      "position": "序列",
+      "minHours": "最低時間",
+      "minFlights": "最低フライト数",
+      "payPerHr": "時給",
+      "actions": "操作"
+    },
+    "form": {
+      "createTitle": "新しいランク",
+      "editTitle": "ランクを編集",
+      "name": "名前",
+      "position": "序列",
+      "minHours": "最低時間",
+      "minFlights": "最低フライト数",
+      "payPerHr": "時給",
+      "payHelp": "1 時間あたりのクレジット、小数点以下 2 桁まで。",
+      "create": "作成",
+      "save": "保存",
+      "invalid": "有効な数値を入力してください。"
+    },
+    "deleteTitle": "ランク「{name}」を削除しますか？",
+    "deleteBody": "元に戻せません。",
+    "created": "ランク「{name}」を作成しました。",
+    "saved": "ランク「{name}」を保存しました。",
+    "deleted": "ランク「{name}」を削除しました。"
+  },
+  "finance": {
+    "title": "財務",
+    "description": "航空会社の残高とすべての取引。",
+    "balance": "残高",
+    "negativeSince": "{date} から残高がマイナスです。",
+    "columns": {
+      "time": "日時（UTC）",
+      "kind": "種別",
+      "amount": "金額",
+      "actor": "操作者",
+      "note": "メモ"
+    },
+    "empty": "まだ取引がありません。",
+    "system": "システム",
+    "kinds": {
+      "starting_capital": "開業資金",
+      "revenue": "収入",
+      "fuel": "燃料",
+      "fees": "諸費用",
+      "maintenance": "整備",
+      "crew_pay": "乗員給与",
+      "lease": "リース",
+      "purchase": "機材購入",
+      "sale": "機材売却",
+      "jumpseat": "ジャンプシート",
+      "rejection_penalty": "却下ペナルティ",
+      "ferry_cost": "回送費用",
+      "reposition": "再配置",
+      "restructuring": "再建",
+      "adjustment": "プラットフォーム調整"
+    }
+  },
+  "apply": {
+    "title": "航空会社の設立申請",
+    "description": "申請はプラットフォームのスタッフが審査します。承認されるとあなたがオーナーになります。",
+    "pending": {
+      "title": "審査中の申請",
+      "body": "{name}（{icao}）は提出済みで、プラットフォームの審査待ちです。結果が出るまで新しい申請はできません。"
+    },
+    "form": {
+      "title": "新しい申請",
+      "name": "航空会社名",
+      "icao": "ICAO コード",
+      "icaoHelp": "大文字 3 文字（例：CCA）。",
+      "iata": "IATA コード",
+      "iataHelp": "任意。英数字 2 文字。",
+      "telephony": "コールサイン",
+      "telephonyHelp": "例：CERULEAN。",
+      "description": "紹介",
+      "hub": "最初のハブ",
+      "hubHelp": "新メンバーの開始空港。",
+      "submit": "申請する",
+      "submitted": "申請しました。"
+    },
+    "validation": {
+      "required": "必須です。",
+      "format": "形式が正しくありません。"
+    },
+    "history": {
+      "title": "自分の申請",
+      "empty": "まだ申請していません。",
+      "columns": {
+        "submitted": "申請日時",
+        "airline": "航空会社",
+        "hub": "ハブ",
+        "status": "状態",
+        "reason": "理由"
+      }
+    }
+  },
+  "airportPicker": {
+    "placeholder": "ICAO または空港名",
+    "noMatch": "一致する空港がありません。",
+    "unknown": "空港が見つかりません。",
+    "withdrawn": "この空港は廃止されています。"
+  },
+  "notifications": {
+    "title": "航空会社の通知",
+    "description": "申請の審査とメンバーの変動。",
+    "empty": "通知はありません。",
+    "markAll": "すべて既読にする",
+    "markedAll": "すべて既読にしました。",
+    "unread": "未読",
+    "generic": "新しい通知があります",
+    "kinds": {
+      "va": {
+        "application": {
+          "approved": "航空会社の設立申請が承認されました：{airline}",
+          "rejected": "航空会社の設立申請が却下されました：{reason}"
+        },
+        "membership": {
+          "accepted": "{airline} があなたの参加申請を承認しました",
+          "declined": "{airline} があなたの参加申請を却下しました",
+          "invited": "{airline} から招待が届きました"
+        }
+      }
+    }
+  }
+}

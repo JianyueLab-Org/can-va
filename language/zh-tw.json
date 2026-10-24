@@ -1,0 +1,458 @@
+{
+  "frame": {
+    "signOut": "登出",
+    "search": {
+      "label": "搜尋頁面",
+      "placeholder": "跳至頁面…",
+      "noResults": "沒有符合的頁面",
+      "hint": "搜尋"
+    },
+    "skipToContent": "跳至主要內容",
+    "closeSidebar": "關閉導覽",
+    "openSidebar": "開啟導覽",
+    "signIn": "登入",
+    "signingOut": "正在登出…",
+    "signOutFailed": "登出失敗，請重試。",
+    "close": "關閉",
+    "dismiss": "關閉提示",
+    "sidebar": "側欄",
+    "openUserMenu": "開啟使用者選單",
+    "openMenu": "開啟選單",
+    "siteNavigation": "站內導覽",
+    "theme": {
+      "label": "外觀",
+      "light": "淺色",
+      "dark": "深色",
+      "system": "跟隨系統"
+    },
+    "language": {
+      "label": "選擇語言"
+    },
+    "bell": {
+      "label": "航司通知",
+      "unread": "航司通知：{count} 則未讀"
+    }
+  },
+  "nav": {
+    "home": "我的航司",
+    "airlines": "航司目錄",
+    "apply": "申請成立航司",
+    "notifications": "航司通知",
+    "mine": "已加入的航司"
+  },
+  "notFound": {
+    "airlines": "瀏覽航司目錄"
+  },
+  "common": {
+    "loading": "載入中…",
+    "save": "儲存",
+    "saving": "正在儲存…",
+    "cancel": "取消",
+    "confirm": "確認",
+    "delete": "刪除",
+    "edit": "編輯",
+    "create": "新增",
+    "loadMore": "載入更多",
+    "none": "—",
+    "yes": "是",
+    "no": "否",
+    "primary": "主要",
+    "owner": "擁有者",
+    "status": {
+      "active": "營運中",
+      "suspended": "已暫停",
+      "closed": "已關閉"
+    },
+    "membershipStatus": {
+      "applied": "申請中",
+      "invited": "已邀請",
+      "active": "成員"
+    },
+    "joinMode": {
+      "open": "自由加入",
+      "application": "申請加入",
+      "invite": "僅限邀請"
+    },
+    "applicationStatus": {
+      "pending": "待審核",
+      "approved": "已核准",
+      "rejected": "未通過"
+    },
+    "errors": {
+      "network": "網路連線失敗，請稍後再試。",
+      "unreachable": "無法連線到航空公司服務，請稍後再試。",
+      "not_allowed": "該介面不在此站的轉發白名單內。",
+      "method_not_allowed": "方法不被允許。",
+      "http_error": "請求失敗，請稍後再試。",
+      "unauthenticated": "登入已失效，請重新整理頁面再登入。",
+      "forbidden": "你沒有執行這項操作的權限。",
+      "insufficient_scope": "這個憑證不能存取航司介面。",
+      "bad_origin": "跨站請求被拒絕。",
+      "not_found": "找不到要操作的對象。",
+      "bad_request": "填寫的內容有誤。",
+      "application_pending": "你已經有一份待審核的申請。",
+      "code_taken": "ICAO、IATA 或呼號已被其他航司使用。",
+      "airport_unavailable": "這個機場不存在或已停用。",
+      "airline_suspended": "這家航司已被暫停，不能修改。",
+      "hub_exists": "這個機場已經是樞紐。",
+      "last_hub": "至少要保留一個樞紐。",
+      "already_member": "已經是這家航司的成員，或有待處理的申請、邀請。",
+      "invite_only": "這家航司僅接受邀請加入。",
+      "owner_cannot_leave": "擁有者需要先轉讓所有權才能退出。",
+      "not_applied": "這位飛行員沒有待處理的加入申請。",
+      "not_invited": "你沒有這家航司的邀請。",
+      "cannot_remove_owner": "不能移除擁有者。",
+      "role_outranks": "對方的角色排位不低於你，不能操作。",
+      "not_active_member": "對方不是這家航司的活躍成員。",
+      "role_name_taken": "已經有同名的角色。",
+      "rank_name_taken": "已經有同名的等級。",
+      "last_rank": "至少要保留一個等級。"
+    }
+  },
+  "home": {
+    "title": "我的航司",
+    "description": "你加入的航司、成立申請和最新通知。",
+    "pilot": {
+      "title": "飛行員",
+      "location": "目前位置",
+      "wallet": "錢包",
+      "none": "加入一家航司後建立飛行員檔案。"
+    },
+    "airlines": {
+      "title": "我的航司",
+      "empty": "還沒有加入任何航司。",
+      "browse": "瀏覽航司目錄"
+    },
+    "application": {
+      "title": "成立申請",
+      "pending": "「{name}」（{icao}）正在等待平台審核。",
+      "none": "想自己經營一家航司？提交成立申請，由平台審核。",
+      "cta": "申請成立航司",
+      "view": "查看申請"
+    },
+    "notifications": {
+      "title": "最新通知",
+      "empty": "沒有通知。",
+      "all": "全部通知"
+    }
+  },
+  "airlines": {
+    "title": "航司目錄",
+    "description": "網路上正在營運的航空公司。",
+    "searchLabel": "搜尋航司",
+    "searchPlaceholder": "名稱、ICAO 或 IATA",
+    "empty": "沒有找到航司。",
+    "columns": {
+      "icao": "ICAO",
+      "iata": "IATA",
+      "name": "名稱",
+      "telephony": "呼號",
+      "joinMode": "加入方式",
+      "hubs": "樞紐",
+      "members": "成員"
+    }
+  },
+  "airline": {
+    "back": "航司目錄",
+    "sections": {
+      "overview": "概況",
+      "members": "成員",
+      "roles": "角色",
+      "ranks": "等級",
+      "manage": "設定",
+      "finance": "財務"
+    },
+    "suspended": "這家航司已被平台暫停，所有修改都會被拒絕。",
+    "about": "簡介",
+    "noDescription": "這家航司還沒有寫簡介。",
+    "facts": {
+      "telephony": "呼號",
+      "joinMode": "加入方式",
+      "hubs": "樞紐",
+      "owner": "擁有者",
+      "members": "成員",
+      "created": "成立",
+      "offline": "離線 PIREP",
+      "freeFlights": "自由飛行"
+    },
+    "allowed": "允許",
+    "notAllowed": "不允許",
+    "ranksTitle": "等級",
+    "actions": {
+      "join": "加入",
+      "applyJoin": "申請加入",
+      "inviteOnly": "這家航司僅接受邀請加入。",
+      "appliedNotice": "你的加入申請正在等待審核。",
+      "invitedNotice": "這家航司邀請你加入。",
+      "acceptInvite": "接受邀請",
+      "declineInvite": "拒絕邀請",
+      "setPrimary": "設為主要航司",
+      "isPrimary": "這是你的主要航司。",
+      "leave": "退出航司",
+      "leaveTitle": "退出 {name}？",
+      "leaveBody": "退出後需要重新加入才能回來。",
+      "ownerCannotLeave": "擁有者需要先轉讓所有權才能退出。"
+    }
+  },
+  "manage": {
+    "title": "航司設定",
+    "description": "名稱、簡介、加入方式和樞紐。",
+    "settings": {
+      "title": "基本設定",
+      "name": "名稱",
+      "description": "簡介",
+      "joinMode": "加入方式",
+      "offline": "接受離線 PIREP",
+      "offlineHint": "關閉時飛行員只能申報在本網完成的飛行。",
+      "free": "允許自由飛行",
+      "freeHint": "開啟後飛行員可以飛航線以外的航段。",
+      "saved": "已儲存。"
+    },
+    "hubs": {
+      "title": "樞紐",
+      "help": "第一個樞紐是新成員的起始位置。",
+      "add": "新增樞紐",
+      "remove": "移除",
+      "lastHub": "至少保留一個樞紐。",
+      "added": "已新增 {icao}。",
+      "removed": "已移除 {icao}。"
+    },
+    "owner": {
+      "title": "轉讓所有權",
+      "help": "只有擁有者能轉讓。新擁有者必須是活躍成員。",
+      "select": "新擁有者",
+      "transfer": "轉讓",
+      "confirmTitle": "轉讓所有權？",
+      "confirmBody": "把 {name} 的所有權轉給 {username}？轉讓後你不再是擁有者。",
+      "done": "所有權已轉讓。",
+      "noCandidates": "沒有其他活躍成員可以接手。"
+    }
+  },
+  "members": {
+    "title": "成員",
+    "description": "航司的成員、加入申請和邀請。",
+    "active": {
+      "title": "成員",
+      "empty": "還沒有成員。"
+    },
+    "applied": {
+      "title": "加入申請",
+      "empty": "沒有待處理的加入申請。"
+    },
+    "invited": {
+      "title": "已邀請",
+      "empty": "沒有待回覆的邀請。"
+    },
+    "invite": {
+      "title": "邀請飛行員",
+      "help": "輸入對方的 CAN ID。",
+      "username": "CAN ID",
+      "action": "傳送邀請",
+      "sent": "已邀請 {username}。"
+    },
+    "columns": {
+      "member": "成員",
+      "roles": "角色",
+      "joined": "加入時間",
+      "actions": "操作"
+    },
+    "actions": {
+      "accept": "接受",
+      "decline": "拒絕",
+      "remove": "移除",
+      "editRoles": "角色"
+    },
+    "removeTitle": "移除 {username}？",
+    "removeBody": "對方會失去這家航司的成員身分，進行中的預訂會被取消。",
+    "rolesTitle": "{username} 的角色",
+    "rolesHelp": "你只能分配排位低於你最高角色的角色。",
+    "rolesNone": "你沒有可以分配的角色。",
+    "done": {
+      "accepted": "已接受 {username}。",
+      "declined": "已拒絕 {username}。",
+      "removed": "已移除 {username}。",
+      "rolesSaved": "已更新 {username} 的角色。"
+    }
+  },
+  "roles": {
+    "title": "角色",
+    "description": "角色由權限組成；排位高的角色可以管理排位低的角色。",
+    "empty": "還沒有角色。",
+    "columns": {
+      "name": "名稱",
+      "position": "排位",
+      "permissions": "權限",
+      "actions": "操作"
+    },
+    "form": {
+      "createTitle": "新增角色",
+      "editTitle": "編輯角色",
+      "name": "名稱",
+      "position": "排位",
+      "positionHelp": "數字越大排位越高。",
+      "permissions": "權限",
+      "create": "建立",
+      "save": "儲存"
+    },
+    "deleteTitle": "刪除角色「{name}」？",
+    "deleteBody": "持有這個角色的成員會失去它帶來的權限。",
+    "created": "已建立角色「{name}」。",
+    "saved": "已儲存角色「{name}」。",
+    "deleted": "已刪除角色「{name}」。"
+  },
+  "permissions": {
+    "airline": {
+      "edit": "編輯航司"
+    },
+    "members": {
+      "manage": "管理成員"
+    },
+    "roles": {
+      "manage": "管理角色"
+    },
+    "fleet": {
+      "manage": "管理機隊"
+    },
+    "routes": {
+      "manage": "管理航線"
+    },
+    "pireps": {
+      "review": "審核 PIREP"
+    },
+    "finance": {
+      "view": "查看財務"
+    },
+    "ranks": {
+      "manage": "管理等級"
+    }
+  },
+  "ranks": {
+    "title": "等級",
+    "description": "飛行員依飛行時數和航段數晉級，等級決定時薪。",
+    "empty": "還沒有等級。",
+    "columns": {
+      "name": "名稱",
+      "position": "排位",
+      "minHours": "最少時數",
+      "minFlights": "最少航段",
+      "payPerHr": "時薪",
+      "actions": "操作"
+    },
+    "form": {
+      "createTitle": "新增等級",
+      "editTitle": "編輯等級",
+      "name": "名稱",
+      "position": "排位",
+      "minHours": "最少時數",
+      "minFlights": "最少航段",
+      "payPerHr": "時薪",
+      "payHelp": "每小時的 credit，最多兩位小數。",
+      "create": "建立",
+      "save": "儲存",
+      "invalid": "請填寫有效的數字。"
+    },
+    "deleteTitle": "刪除等級「{name}」？",
+    "deleteBody": "刪除後無法復原。",
+    "created": "已建立等級「{name}」。",
+    "saved": "已儲存等級「{name}」。",
+    "deleted": "已刪除等級「{name}」。"
+  },
+  "finance": {
+    "title": "財務",
+    "description": "航司餘額和每一筆流水。",
+    "balance": "餘額",
+    "negativeSince": "餘額自 {date} 起為負。",
+    "columns": {
+      "time": "時間（UTC）",
+      "kind": "類型",
+      "amount": "金額",
+      "actor": "操作人",
+      "note": "備註"
+    },
+    "empty": "還沒有流水。",
+    "system": "系統",
+    "kinds": {
+      "starting_capital": "啟動資金",
+      "revenue": "收入",
+      "fuel": "燃油",
+      "fees": "費用",
+      "maintenance": "維護",
+      "crew_pay": "機組薪酬",
+      "lease": "租賃",
+      "purchase": "購機",
+      "sale": "售機",
+      "jumpseat": "搭乘",
+      "rejection_penalty": "駁回罰金",
+      "ferry_cost": "調機費用",
+      "reposition": "調位",
+      "restructuring": "重組",
+      "adjustment": "平台調整"
+    }
+  },
+  "apply": {
+    "title": "申請成立航司",
+    "description": "提交後由平台管理人員審核。核准後你會成為這家航司的擁有者。",
+    "pending": {
+      "title": "申請審核中",
+      "body": "「{name}」（{icao}）已提交，等待平台審核。審核期間不能再提交新的申請。"
+    },
+    "form": {
+      "title": "新申請",
+      "name": "航司名稱",
+      "icao": "ICAO 代碼",
+      "icaoHelp": "三個大寫字母，例如 CCA。",
+      "iata": "IATA 代碼",
+      "iataHelp": "選填，兩位字母或數字。",
+      "telephony": "無線電呼號",
+      "telephonyHelp": "例如 CERULEAN。",
+      "description": "簡介",
+      "hub": "首個樞紐",
+      "hubHelp": "新成員的起始機場。",
+      "submit": "提交申請",
+      "submitted": "申請已提交。"
+    },
+    "validation": {
+      "required": "必填。",
+      "format": "格式不對。"
+    },
+    "history": {
+      "title": "我的申請",
+      "empty": "還沒有提交過申請。",
+      "columns": {
+        "submitted": "提交時間",
+        "airline": "航司",
+        "hub": "樞紐",
+        "status": "狀態",
+        "reason": "原因"
+      }
+    }
+  },
+  "airportPicker": {
+    "placeholder": "ICAO 或機場名",
+    "noMatch": "沒有符合的機場。",
+    "unknown": "找不到這個機場。",
+    "withdrawn": "這個機場已停用。"
+  },
+  "notifications": {
+    "title": "航司通知",
+    "description": "申請審核和成員變動。",
+    "empty": "沒有通知。",
+    "markAll": "全部標為已讀",
+    "markedAll": "已全部標為已讀。",
+    "unread": "未讀",
+    "generic": "你有一則新通知",
+    "kinds": {
+      "va": {
+        "application": {
+          "approved": "你的航司申請已核准：{airline}",
+          "rejected": "你的航司申請未通過：{reason}"
+        },
+        "membership": {
+          "accepted": "{airline} 接受了你的加入申請",
+          "declined": "{airline} 拒絕了你的加入申請",
+          "invited": "{airline} 邀請你加入"
+        }
+      }
+    }
+  }
+}

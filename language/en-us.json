@@ -1,0 +1,458 @@
+{
+  "frame": {
+    "signOut": "Sign out",
+    "search": {
+      "label": "Search pages",
+      "placeholder": "Jump to a page…",
+      "noResults": "No matching pages",
+      "hint": "Search"
+    },
+    "skipToContent": "Skip to content",
+    "closeSidebar": "Close navigation",
+    "openSidebar": "Open navigation",
+    "signIn": "Sign in",
+    "signingOut": "Signing out…",
+    "signOutFailed": "Sign-out failed. Please try again.",
+    "close": "Close",
+    "dismiss": "Dismiss",
+    "sidebar": "Sidebar",
+    "openUserMenu": "Open user menu",
+    "openMenu": "Open menu",
+    "siteNavigation": "Site navigation",
+    "theme": {
+      "label": "Appearance",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "language": {
+      "label": "Choose language"
+    },
+    "bell": {
+      "label": "Airline notifications",
+      "unread": "Airline notifications: {count} unread"
+    }
+  },
+  "nav": {
+    "home": "My airlines",
+    "airlines": "Airline directory",
+    "apply": "Found an airline",
+    "notifications": "Airline notifications",
+    "mine": "Joined airlines"
+  },
+  "notFound": {
+    "airlines": "Browse the airline directory"
+  },
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "loadMore": "Load more",
+    "none": "—",
+    "yes": "Yes",
+    "no": "No",
+    "primary": "Primary",
+    "owner": "Owner",
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "closed": "Closed"
+    },
+    "membershipStatus": {
+      "applied": "Applied",
+      "invited": "Invited",
+      "active": "Member"
+    },
+    "joinMode": {
+      "open": "Open",
+      "application": "By application",
+      "invite": "Invite only"
+    },
+    "applicationStatus": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "errors": {
+      "network": "Network error. Please try again later.",
+      "unreachable": "Cannot reach the airline service. Please try again later.",
+      "not_allowed": "This endpoint is not on this site's forwarding list.",
+      "method_not_allowed": "Method not allowed.",
+      "http_error": "Request failed. Please try again later.",
+      "unauthenticated": "Your session has expired. Reload the page to sign in again.",
+      "forbidden": "You do not have permission to do this.",
+      "insufficient_scope": "This credential cannot access airline endpoints.",
+      "bad_origin": "Cross-site request refused.",
+      "not_found": "The item no longer exists.",
+      "bad_request": "Some of the input is invalid.",
+      "application_pending": "You already have a pending application.",
+      "code_taken": "The ICAO, IATA or telephony is used by another airline.",
+      "airport_unavailable": "The airport does not exist or has been withdrawn.",
+      "airline_suspended": "This airline is suspended and cannot be changed.",
+      "hub_exists": "This airport is already a hub.",
+      "last_hub": "At least one hub must remain.",
+      "already_member": "Already a member, or an application or invite is pending.",
+      "invite_only": "This airline accepts members by invitation only.",
+      "owner_cannot_leave": "The owner must transfer ownership before leaving.",
+      "not_applied": "This pilot has no pending application.",
+      "not_invited": "You have no invitation from this airline.",
+      "cannot_remove_owner": "The owner cannot be removed.",
+      "role_outranks": "Their role ranks at or above yours.",
+      "not_active_member": "They are not an active member of this airline.",
+      "role_name_taken": "A role with this name already exists.",
+      "rank_name_taken": "A rank with this name already exists.",
+      "last_rank": "At least one rank must remain."
+    }
+  },
+  "home": {
+    "title": "My airlines",
+    "description": "Your airlines, your application and the latest notifications.",
+    "pilot": {
+      "title": "Pilot",
+      "location": "Location",
+      "wallet": "Wallet",
+      "none": "Your pilot record is created when you join an airline."
+    },
+    "airlines": {
+      "title": "My airlines",
+      "empty": "You have not joined an airline yet.",
+      "browse": "Browse the airline directory"
+    },
+    "application": {
+      "title": "Airline application",
+      "pending": "{name} ({icao}) is waiting for platform review.",
+      "none": "Want to run your own airline? Apply, and platform staff will review it.",
+      "cta": "Found an airline",
+      "view": "View application"
+    },
+    "notifications": {
+      "title": "Latest notifications",
+      "empty": "No notifications.",
+      "all": "All notifications"
+    }
+  },
+  "airlines": {
+    "title": "Airline directory",
+    "description": "Airlines operating on the network.",
+    "searchLabel": "Search airlines",
+    "searchPlaceholder": "Name, ICAO or IATA",
+    "empty": "No airlines found.",
+    "columns": {
+      "icao": "ICAO",
+      "iata": "IATA",
+      "name": "Name",
+      "telephony": "Telephony",
+      "joinMode": "Joining",
+      "hubs": "Hubs",
+      "members": "Members"
+    }
+  },
+  "airline": {
+    "back": "Airline directory",
+    "sections": {
+      "overview": "Overview",
+      "members": "Members",
+      "roles": "Roles",
+      "ranks": "Ranks",
+      "manage": "Settings",
+      "finance": "Finance"
+    },
+    "suspended": "Platform staff have suspended this airline. Every change will be refused.",
+    "about": "About",
+    "noDescription": "This airline has no description yet.",
+    "facts": {
+      "telephony": "Telephony",
+      "joinMode": "Joining",
+      "hubs": "Hubs",
+      "owner": "Owner",
+      "members": "Members",
+      "created": "Founded",
+      "offline": "Offline PIREPs",
+      "freeFlights": "Free flights"
+    },
+    "allowed": "Allowed",
+    "notAllowed": "Not allowed",
+    "ranksTitle": "Ranks",
+    "actions": {
+      "join": "Join",
+      "applyJoin": "Apply to join",
+      "inviteOnly": "This airline accepts members by invitation only.",
+      "appliedNotice": "Your application to join is waiting for review.",
+      "invitedNotice": "This airline has invited you to join.",
+      "acceptInvite": "Accept invitation",
+      "declineInvite": "Decline invitation",
+      "setPrimary": "Make primary",
+      "isPrimary": "This is your primary airline.",
+      "leave": "Leave airline",
+      "leaveTitle": "Leave {name}?",
+      "leaveBody": "You will have to join again to come back.",
+      "ownerCannotLeave": "The owner must transfer ownership before leaving."
+    }
+  },
+  "manage": {
+    "title": "Airline settings",
+    "description": "Name, description, joining and hubs.",
+    "settings": {
+      "title": "General",
+      "name": "Name",
+      "description": "Description",
+      "joinMode": "Joining",
+      "offline": "Accept offline PIREPs",
+      "offlineHint": "When off, pilots may only file flights flown on the network.",
+      "free": "Allow free flights",
+      "freeHint": "When on, pilots may fly legs outside the route network.",
+      "saved": "Saved."
+    },
+    "hubs": {
+      "title": "Hubs",
+      "help": "The first hub is where new members start.",
+      "add": "Add hub",
+      "remove": "Remove",
+      "lastHub": "At least one hub must remain.",
+      "added": "Added {icao}.",
+      "removed": "Removed {icao}."
+    },
+    "owner": {
+      "title": "Transfer ownership",
+      "help": "Only the owner can transfer. The new owner must be an active member.",
+      "select": "New owner",
+      "transfer": "Transfer",
+      "confirmTitle": "Transfer ownership?",
+      "confirmBody": "Transfer {name} to {username}? You will no longer be the owner.",
+      "done": "Ownership transferred.",
+      "noCandidates": "No other active member can take over."
+    }
+  },
+  "members": {
+    "title": "Members",
+    "description": "Members, applications to join and invitations.",
+    "active": {
+      "title": "Members",
+      "empty": "No members yet."
+    },
+    "applied": {
+      "title": "Applications",
+      "empty": "No pending applications."
+    },
+    "invited": {
+      "title": "Invited",
+      "empty": "No open invitations."
+    },
+    "invite": {
+      "title": "Invite a pilot",
+      "help": "Enter their CAN ID.",
+      "username": "CAN ID",
+      "action": "Send invitation",
+      "sent": "Invited {username}."
+    },
+    "columns": {
+      "member": "Member",
+      "roles": "Roles",
+      "joined": "Joined",
+      "actions": "Actions"
+    },
+    "actions": {
+      "accept": "Accept",
+      "decline": "Decline",
+      "remove": "Remove",
+      "editRoles": "Roles"
+    },
+    "removeTitle": "Remove {username}?",
+    "removeBody": "They lose membership of this airline and their active booking is cancelled.",
+    "rolesTitle": "Roles of {username}",
+    "rolesHelp": "You can assign only roles ranked below your highest role.",
+    "rolesNone": "You have no roles you can assign.",
+    "done": {
+      "accepted": "Accepted {username}.",
+      "declined": "Declined {username}.",
+      "removed": "Removed {username}.",
+      "rolesSaved": "Updated the roles of {username}."
+    }
+  },
+  "roles": {
+    "title": "Roles",
+    "description": "Roles are sets of permissions. A higher role manages lower ones.",
+    "empty": "No roles yet.",
+    "columns": {
+      "name": "Name",
+      "position": "Position",
+      "permissions": "Permissions",
+      "actions": "Actions"
+    },
+    "form": {
+      "createTitle": "New role",
+      "editTitle": "Edit role",
+      "name": "Name",
+      "position": "Position",
+      "positionHelp": "Higher numbers rank higher.",
+      "permissions": "Permissions",
+      "create": "Create",
+      "save": "Save"
+    },
+    "deleteTitle": "Delete role {name}?",
+    "deleteBody": "Members holding this role lose its permissions.",
+    "created": "Created role {name}.",
+    "saved": "Saved role {name}.",
+    "deleted": "Deleted role {name}."
+  },
+  "permissions": {
+    "airline": {
+      "edit": "Edit airline"
+    },
+    "members": {
+      "manage": "Manage members"
+    },
+    "roles": {
+      "manage": "Manage roles"
+    },
+    "fleet": {
+      "manage": "Manage fleet"
+    },
+    "routes": {
+      "manage": "Manage routes"
+    },
+    "pireps": {
+      "review": "Review PIREPs"
+    },
+    "finance": {
+      "view": "View finance"
+    },
+    "ranks": {
+      "manage": "Manage ranks"
+    }
+  },
+  "ranks": {
+    "title": "Ranks",
+    "description": "Pilots advance by block hours and flights; the rank sets the hourly pay.",
+    "empty": "No ranks yet.",
+    "columns": {
+      "name": "Name",
+      "position": "Position",
+      "minHours": "Min. hours",
+      "minFlights": "Min. flights",
+      "payPerHr": "Pay per hour",
+      "actions": "Actions"
+    },
+    "form": {
+      "createTitle": "New rank",
+      "editTitle": "Edit rank",
+      "name": "Name",
+      "position": "Position",
+      "minHours": "Min. hours",
+      "minFlights": "Min. flights",
+      "payPerHr": "Pay per hour",
+      "payHelp": "Credits per hour, up to two decimals.",
+      "create": "Create",
+      "save": "Save",
+      "invalid": "Enter valid numbers."
+    },
+    "deleteTitle": "Delete rank {name}?",
+    "deleteBody": "This cannot be undone.",
+    "created": "Created rank {name}.",
+    "saved": "Saved rank {name}.",
+    "deleted": "Deleted rank {name}."
+  },
+  "finance": {
+    "title": "Finance",
+    "description": "The airline's balance and every ledger entry.",
+    "balance": "Balance",
+    "negativeSince": "The balance has been negative since {date}.",
+    "columns": {
+      "time": "Time (UTC)",
+      "kind": "Type",
+      "amount": "Amount",
+      "actor": "By",
+      "note": "Note"
+    },
+    "empty": "No ledger entries yet.",
+    "system": "System",
+    "kinds": {
+      "starting_capital": "Starting capital",
+      "revenue": "Revenue",
+      "fuel": "Fuel",
+      "fees": "Fees",
+      "maintenance": "Maintenance",
+      "crew_pay": "Crew pay",
+      "lease": "Lease",
+      "purchase": "Purchase",
+      "sale": "Sale",
+      "jumpseat": "Jumpseat",
+      "rejection_penalty": "Rejection penalty",
+      "ferry_cost": "Ferry cost",
+      "reposition": "Reposition",
+      "restructuring": "Restructuring",
+      "adjustment": "Platform adjustment"
+    }
+  },
+  "apply": {
+    "title": "Found an airline",
+    "description": "Platform staff review every application. On approval you become the owner.",
+    "pending": {
+      "title": "Application under review",
+      "body": "{name} ({icao}) has been submitted and is waiting for platform review. You cannot submit another until it is decided."
+    },
+    "form": {
+      "title": "New application",
+      "name": "Airline name",
+      "icao": "ICAO code",
+      "icaoHelp": "Three capital letters, e.g. CCA.",
+      "iata": "IATA code",
+      "iataHelp": "Optional; two letters or digits.",
+      "telephony": "Telephony",
+      "telephonyHelp": "e.g. CERULEAN.",
+      "description": "Description",
+      "hub": "First hub",
+      "hubHelp": "Where new members start.",
+      "submit": "Submit application",
+      "submitted": "Application submitted."
+    },
+    "validation": {
+      "required": "Required.",
+      "format": "Invalid format."
+    },
+    "history": {
+      "title": "My applications",
+      "empty": "You have not applied yet.",
+      "columns": {
+        "submitted": "Submitted",
+        "airline": "Airline",
+        "hub": "Hub",
+        "status": "Status",
+        "reason": "Reason"
+      }
+    }
+  },
+  "airportPicker": {
+    "placeholder": "ICAO or airport name",
+    "noMatch": "No matching airports.",
+    "unknown": "Airport not found.",
+    "withdrawn": "This airport has been withdrawn."
+  },
+  "notifications": {
+    "title": "Airline notifications",
+    "description": "Application reviews and membership changes.",
+    "empty": "No notifications.",
+    "markAll": "Mark all as read",
+    "markedAll": "All marked as read.",
+    "unread": "Unread",
+    "generic": "You have a new notification",
+    "kinds": {
+      "va": {
+        "application": {
+          "approved": "Your airline application was approved: {airline}",
+          "rejected": "Your airline application was rejected: {reason}"
+        },
+        "membership": {
+          "accepted": "{airline} accepted your application to join",
+          "declined": "{airline} declined your application to join",
+          "invited": "{airline} invited you to join"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,458 @@
+{
+  "frame": {
+    "signOut": "退出登录",
+    "search": {
+      "label": "搜索页面",
+      "placeholder": "跳转到页面…",
+      "noResults": "没有匹配的页面",
+      "hint": "搜索"
+    },
+    "skipToContent": "跳到主要内容",
+    "closeSidebar": "关闭导航",
+    "openSidebar": "打开导航",
+    "signIn": "登录",
+    "signingOut": "正在退出…",
+    "signOutFailed": "退出失败，请重试。",
+    "close": "关闭",
+    "dismiss": "关闭提示",
+    "sidebar": "侧栏",
+    "openUserMenu": "打开用户菜单",
+    "openMenu": "打开菜单",
+    "siteNavigation": "站内导航",
+    "theme": {
+      "label": "外观",
+      "light": "浅色",
+      "dark": "深色",
+      "system": "跟随系统"
+    },
+    "language": {
+      "label": "选择语言"
+    },
+    "bell": {
+      "label": "航司通知",
+      "unread": "航司通知：{count} 条未读"
+    }
+  },
+  "nav": {
+    "home": "我的航司",
+    "airlines": "航司目录",
+    "apply": "申请成立航司",
+    "notifications": "航司通知",
+    "mine": "已加入的航司"
+  },
+  "notFound": {
+    "airlines": "浏览航司目录"
+  },
+  "common": {
+    "loading": "加载中…",
+    "save": "保存",
+    "saving": "正在保存…",
+    "cancel": "取消",
+    "confirm": "确认",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "新建",
+    "loadMore": "载入更多",
+    "none": "—",
+    "yes": "是",
+    "no": "否",
+    "primary": "主要",
+    "owner": "所有者",
+    "status": {
+      "active": "运营中",
+      "suspended": "已暂停",
+      "closed": "已关闭"
+    },
+    "membershipStatus": {
+      "applied": "申请中",
+      "invited": "已邀请",
+      "active": "成员"
+    },
+    "joinMode": {
+      "open": "自由加入",
+      "application": "申请加入",
+      "invite": "仅限邀请"
+    },
+    "applicationStatus": {
+      "pending": "待审核",
+      "approved": "已批准",
+      "rejected": "未通过"
+    },
+    "errors": {
+      "network": "网络连接失败，请稍后再试。",
+      "unreachable": "无法连接到航空公司服务，请稍后再试。",
+      "not_allowed": "该接口不在此站的转发白名单内。",
+      "method_not_allowed": "方法不被允许。",
+      "http_error": "请求失败，请稍后再试。",
+      "unauthenticated": "登录已失效，请刷新页面重新登录。",
+      "forbidden": "你没有执行这项操作的权限。",
+      "insufficient_scope": "这个凭据不能访问航司接口。",
+      "bad_origin": "跨站请求被拒绝。",
+      "not_found": "找不到要操作的对象。",
+      "bad_request": "填写的内容有误。",
+      "application_pending": "你已经有一份待审核的申请。",
+      "code_taken": "ICAO、IATA 或呼号已被其他航司使用。",
+      "airport_unavailable": "这个机场不存在或已停用。",
+      "airline_suspended": "这家航司已被暂停，不能修改。",
+      "hub_exists": "这个机场已经是枢纽。",
+      "last_hub": "至少要保留一个枢纽。",
+      "already_member": "已经是这家航司的成员或有待处理的申请、邀请。",
+      "invite_only": "这家航司仅接受邀请加入。",
+      "owner_cannot_leave": "所有者需要先转让所有权才能退出。",
+      "not_applied": "这位飞行员没有待处理的加入申请。",
+      "not_invited": "你没有这家航司的邀请。",
+      "cannot_remove_owner": "不能移除所有者。",
+      "role_outranks": "对方的角色排位不低于你，不能操作。",
+      "not_active_member": "对方不是这家航司的活跃成员。",
+      "role_name_taken": "已经有同名的角色。",
+      "rank_name_taken": "已经有同名的等级。",
+      "last_rank": "至少要保留一个等级。"
+    }
+  },
+  "home": {
+    "title": "我的航司",
+    "description": "你加入的航司、成立申请和最新通知。",
+    "pilot": {
+      "title": "飞行员",
+      "location": "当前位置",
+      "wallet": "钱包",
+      "none": "加入一家航司后建立飞行员档案。"
+    },
+    "airlines": {
+      "title": "我的航司",
+      "empty": "还没有加入任何航司。",
+      "browse": "浏览航司目录"
+    },
+    "application": {
+      "title": "成立申请",
+      "pending": "「{name}」（{icao}）正在等待平台审核。",
+      "none": "想自己经营一家航司？提交成立申请，由平台审核。",
+      "cta": "申请成立航司",
+      "view": "查看申请"
+    },
+    "notifications": {
+      "title": "最新通知",
+      "empty": "没有通知。",
+      "all": "全部通知"
+    }
+  },
+  "airlines": {
+    "title": "航司目录",
+    "description": "网络上正在运营的航空公司。",
+    "searchLabel": "搜索航司",
+    "searchPlaceholder": "名称、ICAO 或 IATA",
+    "empty": "没有找到航司。",
+    "columns": {
+      "icao": "ICAO",
+      "iata": "IATA",
+      "name": "名称",
+      "telephony": "呼号",
+      "joinMode": "加入方式",
+      "hubs": "枢纽",
+      "members": "成员"
+    }
+  },
+  "airline": {
+    "back": "航司目录",
+    "sections": {
+      "overview": "概况",
+      "members": "成员",
+      "roles": "角色",
+      "ranks": "等级",
+      "manage": "设置",
+      "finance": "财务"
+    },
+    "suspended": "这家航司已被平台暂停，所有修改都会被拒绝。",
+    "about": "简介",
+    "noDescription": "这家航司还没有写简介。",
+    "facts": {
+      "telephony": "呼号",
+      "joinMode": "加入方式",
+      "hubs": "枢纽",
+      "owner": "所有者",
+      "members": "成员",
+      "created": "成立",
+      "offline": "离线 PIREP",
+      "freeFlights": "自由飞行"
+    },
+    "allowed": "允许",
+    "notAllowed": "不允许",
+    "ranksTitle": "等级",
+    "actions": {
+      "join": "加入",
+      "applyJoin": "申请加入",
+      "inviteOnly": "这家航司仅接受邀请加入。",
+      "appliedNotice": "你的加入申请正在等待审核。",
+      "invitedNotice": "这家航司邀请你加入。",
+      "acceptInvite": "接受邀请",
+      "declineInvite": "拒绝邀请",
+      "setPrimary": "设为主要航司",
+      "isPrimary": "这是你的主要航司。",
+      "leave": "退出航司",
+      "leaveTitle": "退出 {name}？",
+      "leaveBody": "退出后需要重新加入才能回来。",
+      "ownerCannotLeave": "所有者需要先转让所有权才能退出。"
+    }
+  },
+  "manage": {
+    "title": "航司设置",
+    "description": "名称、简介、加入方式和枢纽。",
+    "settings": {
+      "title": "基本设置",
+      "name": "名称",
+      "description": "简介",
+      "joinMode": "加入方式",
+      "offline": "接受离线 PIREP",
+      "offlineHint": "关闭时飞行员只能申报在本网完成的飞行。",
+      "free": "允许自由飞行",
+      "freeHint": "开启后飞行员可以飞航线以外的航段。",
+      "saved": "已保存。"
+    },
+    "hubs": {
+      "title": "枢纽",
+      "help": "第一个枢纽是新成员的起始位置。",
+      "add": "添加枢纽",
+      "remove": "移除",
+      "lastHub": "至少保留一个枢纽。",
+      "added": "已添加 {icao}。",
+      "removed": "已移除 {icao}。"
+    },
+    "owner": {
+      "title": "转让所有权",
+      "help": "只有所有者能转让。新所有者必须是活跃成员。",
+      "select": "新所有者",
+      "transfer": "转让",
+      "confirmTitle": "转让所有权？",
+      "confirmBody": "把 {name} 的所有权转给 {username}？转让后你不再是所有者。",
+      "done": "所有权已转让。",
+      "noCandidates": "没有其他活跃成员可以接手。"
+    }
+  },
+  "members": {
+    "title": "成员",
+    "description": "航司的成员、加入申请和邀请。",
+    "active": {
+      "title": "成员",
+      "empty": "还没有成员。"
+    },
+    "applied": {
+      "title": "加入申请",
+      "empty": "没有待处理的加入申请。"
+    },
+    "invited": {
+      "title": "已邀请",
+      "empty": "没有待回复的邀请。"
+    },
+    "invite": {
+      "title": "邀请飞行员",
+      "help": "输入对方的 CAN ID。",
+      "username": "CAN ID",
+      "action": "发送邀请",
+      "sent": "已邀请 {username}。"
+    },
+    "columns": {
+      "member": "成员",
+      "roles": "角色",
+      "joined": "加入时间",
+      "actions": "操作"
+    },
+    "actions": {
+      "accept": "接受",
+      "decline": "拒绝",
+      "remove": "移除",
+      "editRoles": "角色"
+    },
+    "removeTitle": "移除 {username}？",
+    "removeBody": "对方会失去这家航司的成员身份，进行中的预订会被取消。",
+    "rolesTitle": "{username} 的角色",
+    "rolesHelp": "你只能分配排位低于你最高角色的角色。",
+    "rolesNone": "你没有可以分配的角色。",
+    "done": {
+      "accepted": "已接受 {username}。",
+      "declined": "已拒绝 {username}。",
+      "removed": "已移除 {username}。",
+      "rolesSaved": "已更新 {username} 的角色。"
+    }
+  },
+  "roles": {
+    "title": "角色",
+    "description": "角色由权限组成；排位高的角色可以管理排位低的角色。",
+    "empty": "还没有角色。",
+    "columns": {
+      "name": "名称",
+      "position": "排位",
+      "permissions": "权限",
+      "actions": "操作"
+    },
+    "form": {
+      "createTitle": "新建角色",
+      "editTitle": "编辑角色",
+      "name": "名称",
+      "position": "排位",
+      "positionHelp": "数字越大排位越高。",
+      "permissions": "权限",
+      "create": "创建",
+      "save": "保存"
+    },
+    "deleteTitle": "删除角色「{name}」？",
+    "deleteBody": "持有这个角色的成员会失去它带来的权限。",
+    "created": "已创建角色「{name}」。",
+    "saved": "已保存角色「{name}」。",
+    "deleted": "已删除角色「{name}」。"
+  },
+  "permissions": {
+    "airline": {
+      "edit": "编辑航司"
+    },
+    "members": {
+      "manage": "管理成员"
+    },
+    "roles": {
+      "manage": "管理角色"
+    },
+    "fleet": {
+      "manage": "管理机队"
+    },
+    "routes": {
+      "manage": "管理航线"
+    },
+    "pireps": {
+      "review": "审核 PIREP"
+    },
+    "finance": {
+      "view": "查看财务"
+    },
+    "ranks": {
+      "manage": "管理等级"
+    }
+  },
+  "ranks": {
+    "title": "等级",
+    "description": "飞行员按飞行小时和航段数晋级，等级决定时薪。",
+    "empty": "还没有等级。",
+    "columns": {
+      "name": "名称",
+      "position": "排位",
+      "minHours": "最少小时",
+      "minFlights": "最少航段",
+      "payPerHr": "时薪",
+      "actions": "操作"
+    },
+    "form": {
+      "createTitle": "新建等级",
+      "editTitle": "编辑等级",
+      "name": "名称",
+      "position": "排位",
+      "minHours": "最少小时",
+      "minFlights": "最少航段",
+      "payPerHr": "时薪",
+      "payHelp": "每小时的 credit，最多两位小数。",
+      "create": "创建",
+      "save": "保存",
+      "invalid": "请填写有效的数字。"
+    },
+    "deleteTitle": "删除等级「{name}」？",
+    "deleteBody": "删除后不可恢复。",
+    "created": "已创建等级「{name}」。",
+    "saved": "已保存等级「{name}」。",
+    "deleted": "已删除等级「{name}」。"
+  },
+  "finance": {
+    "title": "财务",
+    "description": "航司余额和每一笔流水。",
+    "balance": "余额",
+    "negativeSince": "余额自 {date} 起为负。",
+    "columns": {
+      "time": "时间（UTC）",
+      "kind": "类型",
+      "amount": "金额",
+      "actor": "操作人",
+      "note": "备注"
+    },
+    "empty": "还没有流水。",
+    "system": "系统",
+    "kinds": {
+      "starting_capital": "启动资金",
+      "revenue": "收入",
+      "fuel": "燃油",
+      "fees": "费用",
+      "maintenance": "维护",
+      "crew_pay": "机组薪酬",
+      "lease": "租赁",
+      "purchase": "购机",
+      "sale": "售机",
+      "jumpseat": "搭乘",
+      "rejection_penalty": "驳回罚金",
+      "ferry_cost": "调机费用",
+      "reposition": "调位",
+      "restructuring": "重组",
+      "adjustment": "平台调整"
+    }
+  },
+  "apply": {
+    "title": "申请成立航司",
+    "description": "提交后由平台管理人员审核。批准后你会成为这家航司的所有者。",
+    "pending": {
+      "title": "申请审核中",
+      "body": "「{name}」（{icao}）已提交，等待平台审核。审核期间不能再提交新的申请。"
+    },
+    "form": {
+      "title": "新申请",
+      "name": "航司名称",
+      "icao": "ICAO 代码",
+      "icaoHelp": "三个大写字母，例如 CCA。",
+      "iata": "IATA 代码",
+      "iataHelp": "可选，两位字母或数字。",
+      "telephony": "无线电呼号",
+      "telephonyHelp": "例如 CERULEAN。",
+      "description": "简介",
+      "hub": "首个枢纽",
+      "hubHelp": "新成员的起始机场。",
+      "submit": "提交申请",
+      "submitted": "申请已提交。"
+    },
+    "validation": {
+      "required": "必填。",
+      "format": "格式不对。"
+    },
+    "history": {
+      "title": "我的申请",
+      "empty": "还没有提交过申请。",
+      "columns": {
+        "submitted": "提交时间",
+        "airline": "航司",
+        "hub": "枢纽",
+        "status": "状态",
+        "reason": "原因"
+      }
+    }
+  },
+  "airportPicker": {
+    "placeholder": "ICAO 或机场名",
+    "noMatch": "没有匹配的机场。",
+    "unknown": "找不到这个机场。",
+    "withdrawn": "这个机场已停用。"
+  },
+  "notifications": {
+    "title": "航司通知",
+    "description": "申请审核和成员变动。",
+    "empty": "没有通知。",
+    "markAll": "全部标为已读",
+    "markedAll": "已全部标为已读。",
+    "unread": "未读",
+    "generic": "你有一条新通知",
+    "kinds": {
+      "va": {
+        "application": {
+          "approved": "你的航司申请已批准：{airline}",
+          "rejected": "你的航司申请未通过：{reason}"
+        },
+        "membership": {
+          "accepted": "{airline} 接受了你的加入申请",
+          "declined": "{airline} 拒绝了你的加入申请",
+          "invited": "{airline} 邀请你加入"
+        }
+      }
+    }
+  }
+}
