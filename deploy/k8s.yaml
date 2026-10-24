@@ -1,0 +1,117 @@
+# can-va on jyl-tyo — 虚拟航空公司站点。
+#
+# 没有 Secret，没有 imagePullSecrets：仓库和 GHCR 包都是公开的。会话是 can-api 签在
+# 父域 `.ceruleanavi.net` 上的 cookie，这个站原样转发给 can-va-api。
+#
+# can-va-api 在它自己的命名空间 `can-va-api`；`app.can-va-api.svc.cluster.local` 是
+# 全限定名，跨命名空间直接解析。
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: can-va
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: can-va
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: can-va
+  template:
+    metadata:
+      labels:
+        app: can-va
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/jianyuelab-org/can-va:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4321
+          env:
+            # can-va-api 的集群内地址。
+            - name: CAN_VA_API_ORIGIN
+              value: http://app.can-va-api.svc.cluster.local
+            # 只有退出登录转给 can-api。
+            - name: CAN_API_ORIGIN
+              value: https://api.ceruleanavi.net
+            # 未登录时送去主站的登录页。
+            - name: CAN_WEB_ORIGIN
+              value: https://ceruleanavi.net
+            # 写操作的 Origin 比对它，也是转给 can-va-api 的 Origin；
+            # 必须在 can-va-api 的 ALLOWED_ORIGINS 里。
+            - name: PUBLIC_ORIGIN
+              value: https://va.ceruleanavi.net
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "10"]
+          # /healthz 不碰任何上游。
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 4321
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 4321
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+  namespace: can-va
+spec:
+  selector:
+    app: can-va
+  ports:
+    - port: 80
+      targetPort: 4321
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: can-va
+  namespace: can-va
+spec:
+  # TLS 在 Cloudflare 那侧终止；没有 tls: 块。
+  ingressClassName: cloudflare-tunnel
+  rules:
+    - host: va.ceruleanavi.net
+      http:
+        paths:
+          - backend:
+              service:
+                name: app
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix

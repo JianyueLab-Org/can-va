@@ -1,0 +1,31 @@
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+
+# 和本地同一组命令：bun run lint 加一次构建，再核对 can-ui 的页面表。
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # GITHUB_TOKEN 给 can-ui（GitHub Packages 要令牌）。
+      - run: bun install --frozen-lockfile
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # format:check + astro check + vue-tsc + bun test
+      - run: bun run lint
+
+      - run: bun run build
+
+      # can-ui 页面表里 va 的每一条都要在 src/pages 里有路由。
+      - run: bun run check:pages

@@ -1,0 +1,32 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 权限在调用方声明。共享工作流和组织 secret 只到得了 JianyueLab-Org 里的公开仓库，
+# 所以这个仓库必须是公开的。
+permissions:
+  contents: read
+  packages: write
+  deployments: write
+
+jobs:
+  check:
+    uses: ./.github/workflows/check.yml
+    permissions:
+      contents: read
+      packages: read
+
+  deploy:
+    needs: check
+    uses: JianyueLab-Org/actions/.github/workflows/deploy-k8s.yml@615b32a26cc306ee63eefc3ae2cbee41bd5519e1 # main
+    with:
+      image: ghcr.io/jianyuelab-org/can-va
+      namespace: can-va
+      manifest: deploy/k8s.yaml
+      environment_url: https://va.ceruleanavi.net
+    secrets:
+      KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
+      GHCR_PULL_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
