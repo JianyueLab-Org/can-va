@@ -24,6 +24,8 @@ export interface Interval {
 export interface UnreadPoller {
   start(): void;
   stop(): void;
+  /** 立刻再取一次（运行中才取），不动定时器。 */
+  refresh(): void;
 }
 
 /** fetchCount 返回它：登录已失效（401），停止轮询并清零，直到下次导航。 */
@@ -83,6 +85,9 @@ export function createUnreadPoller(options: {
       sync();
     },
     stop,
+    refresh() {
+      if (running) void tick();
+    },
   };
 }
 

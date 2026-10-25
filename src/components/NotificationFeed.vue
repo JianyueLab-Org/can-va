@@ -3,14 +3,15 @@
  * 全部 VA 通知，新的在前。文字由本站字典按 kind + params 拼（`notificationLine`），
  * 字典里没有的 kind 显示通用的一句，链接照旧。
  *
- * 「全部标为已读」发 `POST /api/v1/va/notifications/read-all`（body `{}`，即到现在为
- * 止的全部），成功后派发 `READ_EVENT`，外壳里的铃清零。
+ * 「全部标为已读」发 `POST /api/v1/va/notifications/read-all`，body `{ upTo }`，`upTo`
+ * 是已载入的最新一条 —— 只标会员看到的，渲染之后才到的仍然未读。成功后派发
+ * `READ_EVENT`，外壳里的铃重取未读数。
  */
 import { computed, ref } from "vue";
 import { AlertBox, Badge, Button, EmptyState } from "@jianyuelab-org/can-ui";
 import { createTranslator } from "@jianyuelab-org/can-ui/i18n";
 import { va, type Page, type VaNotification } from "@/lib/va";
-import { notificationLine } from "@/lib/notifications";
+import { markReadUpTo, notificationLine } from "@/lib/notifications";
 import { READ_EVENT } from "@/lib/unreadPoller";
 import { errorText } from "@/lib/errors";
 import { formatUtc } from "@/lib/format";
@@ -50,16 +51,18 @@ async function loadMore(): Promise<void> {
 }
 
 async function markAll(): Promise<void> {
+  const marked = markReadUpTo(items.value);
+  if (marked.upTo === null) return;
   marking.value = true;
   notice.value = "";
-  const result = await va.readAll();
+  const result = await va.readAll(marked.upTo);
   marking.value = false;
   if (!result.ok) {
     error.value = errorText(tc, result);
     return;
   }
   error.value = "";
-  items.value = items.value.map((n) => ({ ...n, read: true }));
+  items.value = markReadUpTo(items.value).items;
   notice.value = t("markedAll");
   window.dispatchEvent(new Event(READ_EVENT));
 }

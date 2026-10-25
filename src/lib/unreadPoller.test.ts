@@ -121,4 +121,18 @@ describe("createUnreadPoller", () => {
     await flush();
     expect(h.fetches()).toBe(2);
   });
+
+  test("refresh refetches at once without adding a timer; no-op when stopped", async () => {
+    const h = harness(true, [4, 1, 9]);
+    h.poller.start();
+    await flush();
+    h.poller.refresh();
+    await flush();
+    expect(h.seen).toEqual([4, 1]);
+    expect(h.timers.size).toBe(1);
+    h.poller.stop();
+    h.poller.refresh();
+    await flush();
+    expect(h.fetches()).toBe(2);
+  });
 });

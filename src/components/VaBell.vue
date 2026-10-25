@@ -4,8 +4,8 @@
  *
  * 填在 `CanFrame` 的 `notifications` 插槽里，所以全网通知铃不在这个站上出现 —— VA 通知
  * 只属于 can-va（spec「Notifications」）。未读数每 60 秒取一次，只在页面可见时取
- * （`src/lib/unreadPoller.ts`）。`/notifications` 页全部标为已读后派发 `READ_EVENT`，
- * 这里清零。
+ * （`src/lib/unreadPoller.ts`）。`/notifications` 页标为已读后派发 `READ_EVENT`，
+ * 这里立刻重取未读数（标记之后才到的通知仍然算未读）。
  */
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import Icon from "@jianyuelab-org/can-ui/components/Icon.vue";
@@ -34,7 +34,7 @@ const label = computed(() =>
 let poller: UnreadPoller | null = null;
 
 function onRead(): void {
-  count.value = 0;
+  poller?.refresh();
 }
 
 onMounted(() => {

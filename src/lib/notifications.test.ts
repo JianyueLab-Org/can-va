@@ -1,6 +1,12 @@
 import { describe, expect, test } from "bun:test";
 import { createTranslator } from "@jianyuelab-org/can-ui/i18n";
-import { notificationLine, PHASE1_KINDS, safePath } from "./notifications";
+import {
+  markReadUpTo,
+  notificationLine,
+  PHASE1_KINDS,
+  safePath,
+} from "./notifications";
+import type { VaNotification } from "./va";
 
 const t = createTranslator({
   generic: "你有一条新通知",
@@ -75,4 +81,36 @@ test("the five Phase 1 kinds", () => {
     "va.membership.declined",
     "va.membership.invited",
   ]);
+});
+
+describe("markReadUpTo", () => {
+  const note = (id: number, read = false): VaNotification => ({
+    id,
+    kind: "va.membership.invited",
+    params: {},
+    path: "/",
+    createdAt: "2026-10-24T00:00:00Z",
+    read,
+  });
+
+  test("upTo is the newest loaded id; only id <= upTo flips to read", () => {
+    const result = markReadUpTo([note(12), note(9, true), note(4)]);
+    expect(result.upTo).toBe(12);
+    expect(result.items.map((n) => [n.id, n.read])).toEqual([
+      [12, true],
+      [9, true],
+      [4, true],
+    ]);
+  });
+
+  test("leaves a newer row alone if one is present", () => {
+    // 列表顺序被打乱时（不应发生）也只翻 <= upTo 的。
+    const result = markReadUpTo([note(5), note(8)]);
+    expect(result.upTo).toBe(5);
+    expect(result.items.map((n) => n.read)).toEqual([true, false]);
+  });
+
+  test("empty list: no upTo, nothing to send", () => {
+    expect(markReadUpTo([])).toEqual({ upTo: null, items: [] });
+  });
 });

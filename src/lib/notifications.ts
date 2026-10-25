@@ -64,3 +64,19 @@ export function notificationLine(
   if (text !== key) return { text, href, known: true };
   return { text: t("generic"), href, known: false };
 }
+
+/**
+ * 「全部标为已读」只标会员看到的：列表新的在前，`upTo` 是第一条的 id，没有就是 null
+ * （不发请求）。`items` 是标完之后的列表，只翻 `id <= upTo` 的。
+ */
+export function markReadUpTo(items: VaNotification[]): {
+  upTo: number | null;
+  items: VaNotification[];
+} {
+  const upTo = items[0]?.id ?? null;
+  if (upTo === null) return { upTo, items };
+  return {
+    upTo,
+    items: items.map((n) => (n.id <= upTo ? { ...n, read: true } : n)),
+  };
+}

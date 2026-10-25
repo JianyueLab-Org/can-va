@@ -10,9 +10,8 @@ can-va-api 的成员前端。平台管理（审批成立申请、暂停、调整
 
 设计文档：monorepo 根的 `docs/superpowers/specs/2026-10-24-virtual-airline-design.md`。
 
-形状和 can-database 一样：Astro SSR（standalone Node 适配器）+ Vue 岛屿 + Tailwind v4
-
-- can-ui，跑在 jyl-tyo 上，由 CI 部署，Ingress 走 `cloudflare-tunnel`。开发端口 4330。
+形状和 can-database 一样：Astro SSR（standalone Node 适配器）+ Vue 岛屿 + Tailwind v4 +
+can-ui，跑在 jyl-tyo 上，由 CI 部署，Ingress 走 `cloudflare-tunnel`。开发端口 4330。
 
 ## 不变量
 

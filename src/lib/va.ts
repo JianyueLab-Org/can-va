@@ -398,6 +398,10 @@ export const va = {
     api<Page<VaNotification>>(`/api/v1/va/notifications?${pageQuery(before)}`),
   unreadCount: () =>
     api<{ count: number }>("/api/v1/va/notifications/unread-count"),
-  readAll: () =>
-    api<null>("/api/v1/va/notifications/read-all", send("POST", {})),
+  /** `upTo`：只标 `id <= upTo` 的；不给就是到现在为止的全部。 */
+  readAll: (upTo?: number) =>
+    api<null>(
+      "/api/v1/va/notifications/read-all",
+      send("POST", upTo === undefined ? {} : { upTo }),
+    ),
 };
