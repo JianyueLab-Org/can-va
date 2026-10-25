@@ -1,17 +1,11 @@
 /**
  * Type-checks the Vue islands.
  *
- * `astro check` diagnoses .astro and .ts only — a .vue file can contain any
- * type error at all and it still reports "0 errors". That left roughly forty
- * components, i.e. most of the interactive UI, with no type gate. vue-tsc
- * covers them.
+ * `astro check` diagnoses .astro and .ts only; a type error in a .vue file
+ * still reports "0 errors". vue-tsc covers the islands in src/components.
  *
- * It also reports errors inside `node_modules/auth-astro`, whose shipped
- * TypeScript source does not compile against the `@auth/core` version resolved
- * here (it references `AuthAction` and `AuthConfig` exports that no longer
- * exist). That is the dependency's problem, not this app's, and there is
- * nothing to fix in this repo — so those diagnostics are printed as a notice
- * and do not fail the run. Anything under src/ does.
+ * Diagnostics from files under node_modules are printed as a notice and do not
+ * fail the run. Anything under src/ does.
  */
 import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";

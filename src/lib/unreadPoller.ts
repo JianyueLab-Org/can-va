@@ -7,7 +7,7 @@
 
 export const UNREAD_POLL_MS = 60_000;
 
-/** `/notifications` 页全部标为已读后在 window 上派发，铃把数字清零。 */
+/** `/notifications` 页标为已读后在 window 上派发，铃立刻重取未读数。 */
 export const READ_EVENT = "va:notifications-read";
 
 export interface Visibility {

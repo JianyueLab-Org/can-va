@@ -19,6 +19,14 @@ export function parseCredits(input: string): number | null {
   return Number(match[1]) * 100 + Number((match[2] ?? "").padEnd(2, "0"));
 }
 
+/** 非负整数输入框：空白、小数、负数都是 null（`Number(" ") === 0` 不算数）。 */
+export function wholeNumber(text: string): number | null {
+  const value = Number(text);
+  return text.trim() !== "" && Number.isInteger(value) && value >= 0
+    ? value
+    : null;
+}
+
 /** `2026-10-24 08:05Z` */
 export function formatUtc(iso: string): string {
   const time = Date.parse(iso);

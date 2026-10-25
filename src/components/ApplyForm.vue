@@ -108,6 +108,7 @@ async function submit(): Promise<void> {
           v-model="draft.name"
           :label="t('form.name')"
           :error="problem('name')"
+          :maxlength="80"
           required
         />
         <Input
@@ -116,6 +117,7 @@ async function submit(): Promise<void> {
           :hint="t('form.telephonyHelp')"
           :error="problem('telephony')"
           autocapitalize="characters"
+          :maxlength="40"
           required
         />
         <Input
@@ -151,6 +153,7 @@ async function submit(): Promise<void> {
             v-model="draft.description"
             :label="t('form.description')"
             :rows="4"
+            :maxlength="2000"
           />
         </div>
         <div class="sm:col-span-2">

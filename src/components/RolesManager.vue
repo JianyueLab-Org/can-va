@@ -23,6 +23,7 @@ import {
 } from "@/lib/va";
 import { can, canActOnRole } from "@/lib/permissions";
 import { errorText } from "@/lib/errors";
+import { wholeNumber } from "@/lib/format";
 
 const props = defineProps<{
   icao: string;
@@ -90,8 +91,8 @@ async function reload(): Promise<void> {
 async function saveRole(): Promise<void> {
   error.value = "";
   notice.value = "";
-  const position = Number(editor.position);
-  if (!editor.name.trim() || !Number.isInteger(position) || position < 0) {
+  const position = wholeNumber(editor.position);
+  if (!editor.name.trim() || position === null) {
     error.value = tc("errors.bad_request");
     return;
   }
@@ -191,7 +192,12 @@ async function removeRole(): Promise<void> {
         class="flex flex-col gap-4"
         @submit.prevent="saveRole"
       >
-        <Input v-model="editor.name" :label="t('form.name')" required />
+        <Input
+          v-model="editor.name"
+          :label="t('form.name')"
+          :maxlength="40"
+          required
+        />
         <Input
           v-model="editor.position"
           :label="t('form.position')"

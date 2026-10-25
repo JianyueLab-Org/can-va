@@ -15,7 +15,7 @@ import {
 import { createTranslator } from "@jianyuelab-org/can-ui/i18n";
 import { va, type Rank, type RankInput } from "@/lib/va";
 import { errorText } from "@/lib/errors";
-import { formatCredits, parseCredits } from "@/lib/format";
+import { formatCredits, parseCredits, wholeNumber } from "@/lib/format";
 
 const props = defineProps<{
   icao: string;
@@ -90,13 +90,6 @@ function openEdit(rank: Rank): void {
     payPerHr: (rank.payPerHr / 100).toFixed(2),
   });
   editorOpen.value = true;
-}
-
-function wholeNumber(text: string): number | null {
-  const value = Number(text);
-  return text.trim() !== "" && Number.isInteger(value) && value >= 0
-    ? value
-    : null;
 }
 
 function readEditor(): RankInput | null {
@@ -220,7 +213,12 @@ async function removeRank(): Promise<void> {
         @submit.prevent="saveRank"
       >
         <div class="sm:col-span-2">
-          <Input v-model="editor.name" :label="t('form.name')" required />
+          <Input
+            v-model="editor.name"
+            :label="t('form.name')"
+            :maxlength="40"
+            required
+          />
         </div>
         <Input
           v-model="editor.position"

@@ -128,7 +128,12 @@ async function transfer(): Promise<void> {
     <Card :title="t('settings.title')">
       <form class="grid gap-4" @submit.prevent="save">
         <div class="grid gap-4 sm:grid-cols-2">
-          <Input v-model="form.name" :label="t('settings.name')" required />
+          <Input
+            v-model="form.name"
+            :label="t('settings.name')"
+            :maxlength="80"
+            required
+          />
           <Select
             :model-value="form.joinMode"
             :options="joinModeOptions"
@@ -140,6 +145,7 @@ async function transfer(): Promise<void> {
           v-model="form.description"
           :label="t('settings.description')"
           :rows="5"
+          :maxlength="2000"
         />
         <Toggle
           v-model="form.allowOfflinePireps"

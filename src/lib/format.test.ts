@@ -1,5 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { formatCredits, formatDay, formatUtc, parseCredits } from "./format";
+import {
+  formatCredits,
+  formatDay,
+  formatUtc,
+  parseCredits,
+  wholeNumber,
+} from "./format";
 
 describe("formatCredits", () => {
   test("minor units to two decimals with grouping", () => {
@@ -35,5 +41,17 @@ describe("UTC formatting", () => {
   test("unparseable input is returned unchanged", () => {
     expect(formatUtc("soon")).toBe("soon");
     expect(formatDay("soon")).toBe("soon");
+  });
+});
+
+describe("wholeNumber", () => {
+  test("accepts non-negative integers, trimmed", () => {
+    expect(wholeNumber("0")).toBe(0);
+    expect(wholeNumber(" 12 ")).toBe(12);
+  });
+  test("rejects blank, whitespace, fractions, negatives and words", () => {
+    for (const bad of ["", " ", "1.5", "-1", "abc"]) {
+      expect(wholeNumber(bad)).toBeNull();
+    }
   });
 });
