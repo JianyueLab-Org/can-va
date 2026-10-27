@@ -147,6 +147,7 @@ async function submit(): Promise<void> {
           :hint="t('form.hubHelp')"
           :error="problem('hubIcao')"
           :messages="picker"
+          required
         />
         <div class="sm:col-span-2">
           <Textarea

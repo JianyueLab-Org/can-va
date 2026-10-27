@@ -77,6 +77,7 @@ onBeforeUnmount(() => {
       :rows="rows"
       row-key="id"
       :loading="loading"
+      :loading-label="tc('loading')"
       :empty="t('empty')"
     >
       <template #cell-icao="{ row }">

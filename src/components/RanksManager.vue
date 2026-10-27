@@ -37,6 +37,8 @@ const busy = ref(false);
 const error = ref("");
 const notice = ref("");
 const editorOpen = ref(false);
+/** 编辑框开着时的错误显示在编辑框里，页面上的那条被遮住。 */
+const editorError = ref("");
 const editor = reactive({
   id: null as number | null,
   name: "",
@@ -63,7 +65,9 @@ const columns = [
     align: "right" as const,
   },
   { key: "payPerHr", label: t("columns.payPerHr"), align: "right" as const },
-  ...(props.canManage ? [{ key: "actions", label: "" }] : []),
+  ...(props.canManage
+    ? [{ key: "actions", label: t("columns.actions"), align: "right" as const }]
+    : []),
 ];
 
 function openCreate(): void {
@@ -77,6 +81,7 @@ function openCreate(): void {
     minFlights: "0",
     payPerHr: "",
   });
+  editorError.value = "";
   editorOpen.value = true;
 }
 
@@ -89,6 +94,7 @@ function openEdit(rank: Rank): void {
     minFlights: String(rank.minFlights),
     payPerHr: (rank.payPerHr / 100).toFixed(2),
   });
+  editorError.value = "";
   editorOpen.value = true;
 }
 
@@ -118,9 +124,10 @@ async function reload(): Promise<void> {
 async function saveRank(): Promise<void> {
   error.value = "";
   notice.value = "";
+  editorError.value = "";
   const input = readEditor();
   if (!input) {
-    error.value = t("form.invalid");
+    editorError.value = t("form.invalid");
     return;
   }
   busy.value = true;
@@ -130,7 +137,7 @@ async function saveRank(): Promise<void> {
       : await va.updateRank(props.icao, editor.id, input);
   busy.value = false;
   if (!result.ok) {
-    error.value = errorText(tc, result);
+    editorError.value = errorText(tc, result);
     return;
   }
   editorOpen.value = false;
@@ -206,12 +213,16 @@ async function removeRank(): Promise<void> {
     <Dialog
       v-model:open="editorOpen"
       :title="editor.id === null ? t('form.createTitle') : t('form.editTitle')"
+      :messages="common"
     >
       <form
         id="rank-editor"
         class="grid gap-4 sm:grid-cols-2"
         @submit.prevent="saveRank"
       >
+        <AlertBox v-if="editorError" variant="danger" class="sm:col-span-2">{{
+          editorError
+        }}</AlertBox>
         <div class="sm:col-span-2">
           <Input
             v-model="editor.name"
@@ -262,6 +273,7 @@ async function removeRank(): Promise<void> {
       v-model:open="deleteOpen"
       :title="t('deleteTitle', { name: deleting?.name ?? '' })"
       :description="t('deleteBody')"
+      :messages="common"
       size="sm"
     >
       <template #footer>

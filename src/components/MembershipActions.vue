@@ -31,15 +31,19 @@ const props = defineProps<{
 const t = createTranslator(props.messages);
 const tc = createTranslator(props.common);
 
-const busy = ref(false);
+type Action =
+  "join" | "acceptInvite" | "declineInvite" | "setPrimary" | "leave";
+
+/** 正在进行的那一个；转圈只给它，其余按钮只禁用。 */
+const busy = ref<Action | null>(null);
 const error = ref("");
 const confirmLeave = ref(false);
 
-async function run(action: () => Promise<ApiResult<unknown>>): Promise<void> {
-  busy.value = true;
+async function run(key: Action): Promise<void> {
+  busy.value = key;
   error.value = "";
-  const result = await action();
-  busy.value = false;
+  const result = await actions[key]();
+  busy.value = null;
   if (!result.ok) {
     confirmLeave.value = false;
     error.value = errorText(tc, result);
@@ -50,7 +54,7 @@ async function run(action: () => Promise<ApiResult<unknown>>): Promise<void> {
 
 const icao = props.airline.icao;
 // 模板里不直接引用 `va`：vue-tsc 把它当成 ref 解包，类型对不上。
-const actions = {
+const actions: Record<Action, () => Promise<ApiResult<unknown>>> = {
   join: () => va.join(icao),
   acceptInvite: () => va.acceptInvite(icao),
   declineInvite: () => va.declineInvite(icao),
@@ -69,9 +73,9 @@ const actions = {
       </p>
       <div v-else>
         <Button
-          :loading="busy"
+          :loading="busy === 'join'"
           :disabled="airline.status !== 'active'"
-          @click="run(actions.join)"
+          @click="run('join')"
         >
           {{
             airline.joinMode === "open"
@@ -89,13 +93,18 @@ const actions = {
     <template v-else-if="membership.status === 'invited'">
       <p class="text-sm text-ink">{{ t("actions.invitedNotice") }}</p>
       <div class="flex flex-wrap gap-2">
-        <Button :loading="busy" @click="run(actions.acceptInvite)">
+        <Button
+          :loading="busy === 'acceptInvite'"
+          :disabled="busy !== null"
+          @click="run('acceptInvite')"
+        >
           {{ t("actions.acceptInvite") }}
         </Button>
         <Button
           variant="secondary"
-          :disabled="busy"
-          @click="run(actions.declineInvite)"
+          :loading="busy === 'declineInvite'"
+          :disabled="busy !== null"
+          @click="run('declineInvite')"
         >
           {{ t("actions.declineInvite") }}
         </Button>
@@ -113,15 +122,16 @@ const actions = {
         <Button
           v-if="!membership.isPrimary"
           variant="secondary"
-          :loading="busy"
-          @click="run(actions.setPrimary)"
+          :loading="busy === 'setPrimary'"
+          :disabled="busy !== null"
+          @click="run('setPrimary')"
         >
           {{ t("actions.setPrimary") }}
         </Button>
         <Button
           v-if="!membership.isOwner"
           variant="danger"
-          :disabled="busy"
+          :disabled="busy !== null"
           @click="confirmLeave = true"
         >
           {{ t("actions.leave") }}
@@ -133,14 +143,23 @@ const actions = {
       v-model:open="confirmLeave"
       :title="t('actions.leaveTitle', { name: airline.name })"
       :description="t('actions.leaveBody')"
+      :messages="common"
       size="sm"
     >
       <template #footer>
         <div class="flex justify-end gap-2">
-          <Button variant="secondary" @click="confirmLeave = false">
+          <Button
+            variant="secondary"
+            :disabled="busy !== null"
+            @click="confirmLeave = false"
+          >
             {{ tc("cancel") }}
           </Button>
-          <Button variant="danger" :loading="busy" @click="run(actions.leave)">
+          <Button
+            variant="danger"
+            :loading="busy === 'leave'"
+            @click="run('leave')"
+          >
             {{ t("actions.leave") }}
           </Button>
         </div>

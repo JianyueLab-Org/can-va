@@ -47,6 +47,8 @@ const busy = ref(false);
 const error = ref("");
 const notice = ref("");
 const editorOpen = ref(false);
+/** 编辑框开着时的错误显示在编辑框里，页面上的那条被遮住。 */
+const editorError = ref("");
 const editor = reactive<{
   id: number | null;
   name: string;
@@ -65,11 +67,14 @@ const columns = [
   { key: "name", label: t("columns.name") },
   { key: "position", label: t("columns.position"), align: "right" as const },
   { key: "permissions", label: t("columns.permissions") },
-  { key: "actions", label: "" },
+  ...(canManage
+    ? [{ key: "actions", label: t("columns.actions"), align: "right" as const }]
+    : []),
 ];
 
 function openCreate(): void {
   Object.assign(editor, { id: null, name: "", position: "", permissions: [] });
+  editorError.value = "";
   editorOpen.value = true;
 }
 
@@ -80,6 +85,7 @@ function openEdit(role: Role): void {
     position: String(role.position),
     permissions: [...role.permissions],
   });
+  editorError.value = "";
   editorOpen.value = true;
 }
 
@@ -91,9 +97,10 @@ async function reload(): Promise<void> {
 async function saveRole(): Promise<void> {
   error.value = "";
   notice.value = "";
+  editorError.value = "";
   const position = wholeNumber(editor.position);
   if (!editor.name.trim() || position === null) {
-    error.value = tc("errors.bad_request");
+    editorError.value = tc("errors.bad_request");
     return;
   }
   const input = {
@@ -108,7 +115,7 @@ async function saveRole(): Promise<void> {
       : await va.updateRole(props.icao, editor.id, input);
   busy.value = false;
   if (!result.ok) {
-    error.value = errorText(tc, result);
+    editorError.value = errorText(tc, result);
     return;
   }
   editorOpen.value = false;
@@ -186,12 +193,16 @@ async function removeRole(): Promise<void> {
     <Dialog
       v-model:open="editorOpen"
       :title="editor.id === null ? t('form.createTitle') : t('form.editTitle')"
+      :messages="common"
     >
       <form
         id="role-editor"
         class="flex flex-col gap-4"
         @submit.prevent="saveRole"
       >
+        <AlertBox v-if="editorError" variant="danger">{{
+          editorError
+        }}</AlertBox>
         <Input
           v-model="editor.name"
           :label="t('form.name')"
@@ -242,6 +253,7 @@ async function removeRole(): Promise<void> {
       v-model:open="deleteOpen"
       :title="t('deleteTitle', { name: deleting?.name ?? '' })"
       :description="t('deleteBody')"
+      :messages="common"
       size="sm"
     >
       <template #footer>

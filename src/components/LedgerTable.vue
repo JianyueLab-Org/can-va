@@ -99,7 +99,8 @@ async function loadMore(): Promise<void> {
         >
       </template>
       <template #cell-actor="{ row }">
-        <span class="font-mono text-xs">{{ row.actor ?? t("system") }}</span>
+        <span v-if="row.actor" class="font-mono text-xs">{{ row.actor }}</span>
+        <span v-else class="text-muted">{{ t("system") }}</span>
       </template>
       <template #cell-note="{ row }">
         <span class="text-muted">{{ row.note ?? tc("none") }}</span>
