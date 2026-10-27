@@ -79,12 +79,15 @@ const activeColumns = [
   { key: "username", label: t("columns.member") },
   { key: "roleIds", label: t("columns.roles") },
   { key: "joinedAt", label: t("columns.joined") },
-  { key: "actions", label: "" },
+  { key: "actions", label: t("columns.actions"), align: "right" as const },
 ];
-const pendingColumns = [
+const invitedColumns = [
   { key: "username", label: t("columns.member") },
   { key: "joinedAt", label: t("columns.joined") },
-  { key: "actions", label: "" },
+];
+const appliedColumns = [
+  ...invitedColumns,
+  { key: "actions", label: t("columns.actions"), align: "right" as const },
 ];
 
 async function refresh(status: MembershipStatus): Promise<void> {
@@ -228,7 +231,7 @@ async function saveRoles(): Promise<void> {
       <section>
         <h2 class="text-title-3 mb-3 text-ink">{{ t("applied.title") }}</h2>
         <DataTable
-          :columns="pendingColumns"
+          :columns="appliedColumns"
           :rows="lists.applied"
           row-key="username"
           :empty="t('applied.empty')"
@@ -253,6 +256,7 @@ async function saveRoles(): Promise<void> {
               <Button
                 size="sm"
                 variant="secondary"
+                :loading="busy === `decline:${row.username}`"
                 :disabled="busy !== null"
                 @click="decline(row)"
               >
@@ -266,7 +270,7 @@ async function saveRoles(): Promise<void> {
       <section>
         <h2 class="text-title-3 mb-3 text-ink">{{ t("invited.title") }}</h2>
         <DataTable
-          :columns="pendingColumns"
+          :columns="invitedColumns"
           :rows="lists.invited"
           row-key="username"
           :empty="t('invited.empty')"
@@ -277,9 +281,6 @@ async function saveRoles(): Promise<void> {
           </template>
           <template #cell-joinedAt="{ row }">
             <span class="tabular-nums">{{ formatDay(row.joinedAt) }}</span>
-          </template>
-          <template #cell-actions>
-            <span></span>
           </template>
         </DataTable>
       </section>
@@ -311,6 +312,7 @@ async function saveRoles(): Promise<void> {
       v-model:open="removeOpen"
       :title="t('removeTitle', { username: removing?.username ?? '' })"
       :description="t('removeBody')"
+      :messages="common"
       size="sm"
     >
       <template #footer>
@@ -329,6 +331,7 @@ async function saveRoles(): Promise<void> {
       v-model:open="rolesOpen"
       :title="t('rolesTitle', { username: editing?.username ?? '' })"
       :description="t('rolesHelp')"
+      :messages="common"
     >
       <p v-if="assignable.length === 0" class="text-sm text-muted">
         {{ t("rolesNone") }}

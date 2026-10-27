@@ -1,6 +1,6 @@
 ---
 /**
- * 航司各页的公共外框：标题（航司名，ICAO 作眉题）、暂停提示、分页标签。
+ * 航司各页的公共外框：标题（航司名，ICAO 作眉题）、暂停提示、分页标签，标签下是本页说明。
  * 标签按成员身份和权限出现（`airlineSections`）；页面自己的门槛在各页 frontmatter 里。
  */
 import PageHeader from "@/components/PageHeader.astro";
@@ -23,7 +23,6 @@ const sections = airlineSections(page.icao, page.membership);
   <PageHeader
     title={page.airline.name}
     eyebrow={page.icao}
-    description={description}
     back={{ href: "/airlines", label: t("back") }}
   />
   {
@@ -34,7 +33,10 @@ const sections = airlineSections(page.icao, page.membership);
     )
   }
   <nav
-    class="mb-6 flex gap-1 overflow-x-auto border-b border-subtle"
+    class:list={[
+      "flex gap-1 overflow-x-auto border-b border-subtle",
+      description ? "mb-4" : "mb-6",
+    ]}
     aria-label={page.airline.name}
   >
     {
@@ -43,7 +45,7 @@ const sections = airlineSections(page.icao, page.membership);
           href={section.href}
           aria-current={section.key === current ? "page" : undefined}
           class:list={[
-            "-mb-px whitespace-nowrap border-b-2 px-3 py-2 text-sm transition-colors",
+            "focus-ring -mb-px whitespace-nowrap border-b-2 px-3 py-2 text-sm transition-colors",
             section.key === current
               ? "border-[var(--color-can)] font-medium text-ink"
               : "border-transparent text-muted hover:text-ink",
@@ -54,5 +56,10 @@ const sections = airlineSections(page.icao, page.membership);
       ))
     }
   </nav>
+  {
+    description && (
+      <p class="mb-6 max-w-2xl text-sm text-muted">{description}</p>
+    )
+  }
   <slot />
 </div>

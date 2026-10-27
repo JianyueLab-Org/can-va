@@ -176,7 +176,9 @@ async function transfer(): Promise<void> {
           <Button
             size="sm"
             variant="ghost"
+            :loading="busy === `hub:${hub}`"
             :disabled="hubs.length === 1 || busy !== null"
+            :label="`${t('hubs.remove')} ${hub}`"
             :title="hubs.length === 1 ? t('hubs.lastHub') : undefined"
             @click="removeHub(hub)"
           >
@@ -228,6 +230,7 @@ async function transfer(): Promise<void> {
       :description="
         t('owner.confirmBody', { name: airline.name, username: newOwner })
       "
+      :messages="common"
       size="sm"
     >
       <template #footer>
