@@ -30,12 +30,18 @@ can-ui，跑在 jyl-tyo 上，由 CI 部署，Ingress 走 `cloudflare-tunnel`。
 - 岛屿只打本站的 `src/pages/api/[...path].ts`。白名单只收岛屿在用的 `/api/v1/va/*`
   成员路由，加一条转给 can-api 的 `POST /api/v1/auth/signout`（外壳的退出登录）。
   **不收** `/api/v1/va/staff/*` 和 `/api/v1/internal/*`。
+  不收 `/api/v1/va/client/*` Bearer 客户端命名空间。录制证据只放行 cookie 路径
+  `GET /api/v1/va/me/recordings`、`GET /api/v1/va/recordings/<UUID>` 及其 `/track`。
+  录制列表每页最多 20 条，前后翻页替换当前页；轨迹增量解析 NDJSON，SVG 最多保留 4096 点。
+  摘要和下载每次由上游检查本人或当前航司审核权限；证据不进共享缓存，页面隐藏时清空。
 - 写操作：`Origin` 必须等于 `PUBLIC_ORIGIN`（403 `bad_origin`），再把这个 Origin 转给
   can-va-api（它查 `ALLOWED_ORIGINS`）。`astro.config.mjs` 里 `checkOrigin` 是关的。
-- 岛屿用到的每一条路径都写在 `src/lib/va.ts`，写成字面量。`src/lib/allowList.test.ts`
-  双向核对：用到的都放行，放行的都有人用。加路由 = `va.ts` 加方法 + 白名单加条目
-  （带 `who`）。动态段的变量名决定测试的样例值，规则在 `va.ts` 抬头。
+- 岛屿用到的每一条路径都写在 `src/lib/va.ts`，白名单加显式条目与调用方。
+- `src/lib/allowList.test.ts` 测试代理路径与方法边界，不读取源码验证路由连接。
+- 机队、航线、预订、报告、钱包、档案和排行榜均由同源代理读取；不扩大为通配转发。
 - 接口形状在 `src/lib/va.ts` 里手写，照 can-va-api 的契约逐字对应；改一边要改两边。
+- 航线 PATCH 只发送变更字段；未修改的历史机场不得重新校验为新目的地。
+- 详情页不显示未加载的列表，当前预订只显示本页对应的预订，不切换为管理者的其他航班。
 
 ## 通知
 
@@ -44,19 +50,23 @@ can-ui，跑在 jyl-tyo 上，由 CI 部署，Ingress 走 `cloudflare-tunnel`。
 - 未读数每 60 秒取一次，只在页面可见时取（`src/lib/unreadPoller.ts`）。
 - 文字按 `kind` + `params` 用本站字典拼（`notifications.kinds.<kind>`，kind 的点就是
   层级）。字典里没有的 kind 显示 `notifications.generic`，链接照旧。新 kind 上线前在
-  四个语言文件里都加上；`src/lib/language.test.ts` 核对 Phase 1 的五个。
+  四个语言文件里都加上；`src/lib/language.test.ts` 核对全部已实现通知种类。
 - 通知的 `path` 只放行站内路径（`safePath`）。
 
 ## 语言
 
 zh-cn（默认）、zh-tw、en-us、ja-jp。四个文件键完全一致（`language.test.ts`）。
 错误码的文字在 `common.errors.<code>`，没有的显示上游的英文 `message`。
-侧栏四页的名字和 can-ui ⌘K 页面表里 `va` 的标题一致。
+侧栏包括航司、飞行、钱包、个人档案、排行榜与通知；航司标签按成员和审核权限显示。
 
 ## 金额和时间
 
 金额是最小单位（1/100 credit），显示用 `formatCredits`，输入用 `parseCredits`。
 时间一律按 UTC 显示（`formatUtc`、`formatDay`），服务端渲染和水合必须一致。
+飞行报告时间输入是 UTC，提交会移动飞行员和飞机。审核人不得是报告飞行员。
+录制轨迹不请求外部地图或瓦片。位置缺失、连接代次变化与超过 10 秒的间隔断开线段。
+大轨迹明确显示抽样提示；下载保留完整原始样本。原始文件到期后只显示摘要、异常和保留期限。
+等级机型权限累计继承所有已达到的较低等级，按已批准报告派生。
 
 ## 和 can-ui 的接缝
 

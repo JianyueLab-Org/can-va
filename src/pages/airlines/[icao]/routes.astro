@@ -1,0 +1,38 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import AirlineFrame from "@/components/AirlineFrame.astro";
+import Manager from "@/components/RoutesManager.vue";
+import { getLocale, getMessages, useTranslations } from "@/lib/i18n";
+import { currentMe } from "@/server/session";
+import { getVa } from "@/server/canVa";
+import { loadAirlinePage } from "@/server/airlinePage";
+import { can, isActiveMember } from "@/lib/permissions";
+import type { AircraftType, Route } from "@/lib/va";
+const me = currentMe(Astro.locals),
+  page = await loadAirlinePage(Astro, Astro.params.icao, me);
+if (!page || !isActiveMember(page.membership)) return Astro.rewrite("/404");
+const locale = getLocale(Astro.cookies),
+  t = useTranslations(locale, "ops");
+const data = await getVa<{ items: Route[] }>(
+  Astro,
+  `/api/v1/va/airlines/${page.icao}/routes`,
+);
+const types = await getVa<{ items: AircraftType[] }>(
+  Astro,
+  "/api/v1/va/aircraft-types",
+);
+---
+
+<AppLayout title={t("routes")}
+  ><AirlineFrame page={page} current="routes"
+    ><Manager
+      icao={page.icao}
+      routes={data?.items ?? []}
+      types={types?.items ?? []}
+      manage={can(page.membership, "routes.manage")}
+      messages={getMessages(locale, "ops")}
+      common={getMessages(locale, "common")}
+      client:load
+    /></AirlineFrame
+  ></AppLayout
+>

@@ -2,7 +2,7 @@
 /**
  * 等级：名称、排位、最少小时、最少航段、时薪。人人看得到；`ranks.manage` 才能改。
  * 时薪在接口里是最小单位（1/100 credit），输入框里是 credit。最后一个等级删不掉
- * （上游 409 `last_rank`）。Phase 1 的等级还没有机型。
+ * （上游 409 `last_rank`）。机型资格累计继承所有已达到等级的授权。
  */
 import { computed, reactive, ref } from "vue";
 import {
@@ -13,7 +13,7 @@ import {
   Input,
 } from "@jianyuelab-org/can-ui";
 import { createTranslator } from "@jianyuelab-org/can-ui/i18n";
-import { va, type Rank, type RankInput } from "@/lib/va";
+import { va, type Rank, type RankInput, type AircraftType } from "@/lib/va";
 import { errorText } from "@/lib/errors";
 import { formatCredits, parseCredits, wholeNumber } from "@/lib/format";
 
@@ -24,6 +24,7 @@ const props = defineProps<{
   ranks: Rank[];
   messages: Record<string, unknown>;
   common: Record<string, unknown>;
+  types: AircraftType[];
 }>();
 const t = createTranslator(props.messages);
 const tc = createTranslator(props.common);
@@ -46,6 +47,7 @@ const editor = reactive({
   minHours: "",
   minFlights: "",
   payPerHr: "",
+  typeIcaos: [] as string[],
 });
 const deleting = ref<Rank | null>(null);
 const deleteOpen = computed({
@@ -64,6 +66,7 @@ const columns = [
     label: t("columns.minFlights"),
     align: "right" as const,
   },
+  { key: "typeIcaos", label: t("form.types") },
   { key: "payPerHr", label: t("columns.payPerHr"), align: "right" as const },
   ...(props.canManage
     ? [{ key: "actions", label: t("columns.actions"), align: "right" as const }]
@@ -80,6 +83,7 @@ function openCreate(): void {
     minHours: "0",
     minFlights: "0",
     payPerHr: "",
+    typeIcaos: [],
   });
   editorError.value = "";
   editorOpen.value = true;
@@ -93,6 +97,7 @@ function openEdit(rank: Rank): void {
     minHours: String(rank.minHours),
     minFlights: String(rank.minFlights),
     payPerHr: (rank.payPerHr / 100).toFixed(2),
+    typeIcaos: [...(rank.typeIcaos ?? [])],
   });
   editorError.value = "";
   editorOpen.value = true;
@@ -113,7 +118,14 @@ function readEditor(): RankInput | null {
   ) {
     return null;
   }
-  return { name, position, minHours, minFlights, payPerHr };
+  return {
+    name,
+    position,
+    minHours,
+    minFlights,
+    payPerHr,
+    typeIcaos: [...editor.typeIcaos],
+  };
 }
 
 async function reload(): Promise<void> {
@@ -122,6 +134,7 @@ async function reload(): Promise<void> {
 }
 
 async function saveRank(): Promise<void> {
+  if (busy.value) return;
   error.value = "";
   notice.value = "";
   editorError.value = "";
@@ -198,6 +211,9 @@ async function removeRank(): Promise<void> {
           formatCredits(row.payPerHr, locale)
         }}</span>
       </template>
+      <template #cell-typeIcaos="{ row }">
+        {{ (row.typeIcaos ?? []).join(", ") || tc("none") }}
+      </template>
       <template #cell-actions="{ row }">
         <div class="flex justify-end gap-2">
           <Button size="sm" variant="secondary" @click="openEdit(row)">
@@ -256,6 +272,22 @@ async function removeRank(): Promise<void> {
           inputmode="numeric"
           required
         />
+        <fieldset class="grid gap-2 sm:col-span-2">
+          <legend class="text-sm font-medium">{{ t("form.types") }}</legend>
+          <p class="text-sm text-muted">{{ t("form.typesHelp") }}</p>
+          <label
+            v-for="type in types"
+            :key="type.icao"
+            class="flex items-center gap-2 text-sm"
+          >
+            <input
+              v-model="editor.typeIcaos"
+              type="checkbox"
+              :value="type.icao"
+            />
+            {{ type.icao }} · {{ type.name }}
+          </label>
+        </fieldset>
       </form>
       <template #footer>
         <div class="flex justify-end gap-2">

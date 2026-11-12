@@ -1,0 +1,73 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import AirlineFrame from "@/components/AirlineFrame.astro";
+import FlightOperations from "@/components/FlightOperations.vue";
+import { getLocale, getMessages, useTranslations } from "@/lib/i18n";
+import { currentMe } from "@/server/session";
+import { getVa } from "@/server/canVa";
+import { loadAirlinePage } from "@/server/airlinePage";
+import { can, isActiveMember } from "@/lib/permissions";
+import type {
+  Aircraft,
+  Route,
+  Rank,
+  Booking,
+  Pirep,
+  Page,
+  PilotProfile,
+  Operations,
+} from "@/lib/va";
+const me = currentMe(Astro.locals),
+  page = await loadAirlinePage(Astro, Astro.params.icao, me);
+if (
+  !page ||
+  !isActiveMember(page.membership) ||
+  !can(page.membership, "pireps.review")
+)
+  return Astro.rewrite("/404");
+const locale = getLocale(Astro.cookies),
+  t = useTranslations(locale, "ops");
+const [fleet, routes, ranks, current, history, reports, profile, operations] =
+  await Promise.all([
+    getVa<{ items: Aircraft[] }>(
+      Astro,
+      `/api/v1/va/airlines/${page.icao}/fleet`,
+    ),
+    getVa<{ items: Route[] }>(Astro, `/api/v1/va/airlines/${page.icao}/routes`),
+    getVa<{ items: Rank[] }>(Astro, `/api/v1/va/airlines/${page.icao}/ranks`),
+    getVa<Booking>(Astro, "/api/v1/va/me/booking"),
+    getVa<Page<Booking>>(Astro, "/api/v1/va/me/bookings"),
+    getVa<Page<Pirep>>(
+      Astro,
+      `/api/v1/va/airlines/${page.icao}/pireps?status=pending`,
+    ),
+    getVa<PilotProfile>(Astro, `/api/v1/va/pilots/${me.username}`),
+    getVa<Operations>(Astro, `/api/v1/va/airlines/${page.icao}/operations`),
+  ]);
+---
+
+<AppLayout title={t("reviewQueue")}
+  ><AirlineFrame page={page} current="pireps"
+    ><FlightOperations
+      icao={page.icao}
+      username={me.username}
+      location={me.pilot?.locationIcao ?? null}
+      fleet={fleet?.items ?? []}
+      routes={routes?.items ?? []}
+      ranks={ranks?.items ?? []}
+      profile={profile}
+      current={current}
+      history={history ?? { items: [], next: null }}
+      reports={reports ?? { items: [], next: null }}
+      review={true}
+      manageFleet={can(page.membership, "fleet.manage")}
+      allowFree={page.airline.allowFreeFlights}
+      allowOffline={page.airline.allowOfflinePireps}
+      operations={operations}
+      locale={locale}
+      messages={getMessages(locale, "ops")}
+      common={getMessages(locale, "common")}
+      client:load
+    /></AirlineFrame
+  ></AppLayout
+>

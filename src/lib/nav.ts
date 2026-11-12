@@ -1,5 +1,5 @@
 /**
- * 侧栏：四页，加上「已加入的航司」一组（只列活跃成员身份，主要航司在前）。
+ * 侧栏：平台页面，加上「已加入的航司」一组（活跃身份，主要航司在前）。
  * 在 Astro 侧拼好，作为 props 进外壳岛屿。
  */
 import type { Translator } from "@jianyuelab-org/can-ui/i18n";
@@ -18,6 +18,10 @@ const PAGES = [
   { key: "nav.airlines", href: "/airlines", icon: "buildingOffice" },
   { key: "nav.apply", href: "/apply", icon: "documentText" },
   { key: "nav.notifications", href: "/notifications", icon: "bell" },
+  { key: "nav.flights", href: "/flights", icon: "paperAirplane" },
+  { key: "nav.wallet", href: "/wallet", icon: "documentText" },
+  { key: "nav.profile", href: "/profile", icon: "users" },
+  { key: "nav.leaderboards", href: "/leaderboards", icon: "documentText" },
 ] as const;
 
 export function buildNavigation(

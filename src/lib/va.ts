@@ -5,11 +5,9 @@
  * 浏览器安全：不 import `src/server` 下的任何东西。
  *
  * **岛屿用到的每一条反代路径都写在这个文件里，而且写成字面量。**
- * `src/lib/allowList.test.ts` 扫这些字面量，逐条对白名单；动态段的变量名决定测试代入的
- * 样例值：名字带 `hub`/`airport` 代 `ZBAA`，带 `user` 代 `100001`，`id` 代 `1`，其余
- * （航司 ICAO）代 `CCA`。查询串一律写在 `?` 后面。
+ * `src/lib/allowList.test.ts` 测试显式路径、HTTP 方法和权限边界，不扫描源码。
  *
- * 形状照 Phase 1 契约逐字手写；改一边要改两边。
+ * 形状照共享 HTTP 契约逐字手写；改一边要改两边。
  */
 
 export type Permission =
@@ -131,6 +129,7 @@ export interface Rank {
   minFlights: number;
   /** Minor units per block hour. */
   payPerHr: number;
+  typeIcaos: string[];
 }
 
 export interface RankInput {
@@ -139,6 +138,7 @@ export interface RankInput {
   minHours: number;
   minFlights: number;
   payPerHr: number;
+  typeIcaos: string[];
 }
 
 export interface MyMembership {
@@ -280,7 +280,259 @@ function pageQuery(before?: number | null, limit?: number): string {
 const enc = encodeURIComponent;
 
 /** One method per proxied route. `airline` is the airline ICAO, upper case. */
+export interface AircraftType {
+  icao: string;
+  name: string;
+  seats: number;
+  cargoKg: number;
+  price: number;
+  leasePerDay: number;
+  burnKgPerHr: number;
+  cruiseKt: number;
+  rangeNm: number;
+  maintPerHr: number;
+  active: boolean;
+}
+export interface Aircraft {
+  id: number;
+  airlineId: number;
+  registration: string;
+  typeIcao: string;
+  livery: string;
+  tenure: "owned" | "leased";
+  locationIcao: string;
+  status: "available" | "booked" | "gone";
+  hoursMs: number;
+  acquiredAt: string;
+  purchasePrice: number | null;
+}
+export interface Route {
+  id: number;
+  airlineId: number;
+  flightNumber: string;
+  depIcao: string;
+  arrIcao: string;
+  distanceNm: number;
+  typeIcaos: string[];
+  active: boolean;
+}
+export interface Booking {
+  id: number;
+  username: string;
+  airlineId: number;
+  airlineIcao: string;
+  aircraftId: number;
+  registration: string;
+  typeIcao: string;
+  routeId: number | null;
+  kind: "scheduled" | "free" | "ferry";
+  depIcao: string;
+  arrIcao: string;
+  distanceNm: number;
+  callsign: string;
+  pax: number;
+  cargoKg: number;
+  status: "active" | "filed" | "cancelled" | "expired";
+  expiresAt: string;
+  createdAt: string;
+}
+export interface BookingInput {
+  aircraftId: number;
+  routeId?: number;
+  kind: Booking["kind"];
+  arrIcao?: string;
+  callsign?: string;
+  username?: string;
+}
+export interface PirepInput {
+  blockOff: string;
+  blockOn: string;
+  fuelKg: number;
+  remarks: string;
+  declaredOnline: boolean;
+  evidence: string;
+}
+export interface Pirep extends PirepInput {
+  id: number;
+  bookingId: number;
+  recordingId?: string | null;
+  username: string;
+  airlineId: number;
+  airlineIcao: string;
+  aircraftId: number;
+  registration: string;
+  depIcao: string;
+  arrIcao: string;
+  distanceNm: number;
+  callsign: string;
+  flags: string[];
+  status: "pending" | "approved" | "rejected";
+  reviewedBy: string | null;
+  reviewComment: string | null;
+  params: Record<string, number>;
+  createdAt: string;
+}
+export interface Operations {
+  pendingCount: number;
+  oldestPendingAt: string | null;
+  restructureDeadline: string | null;
+}
+
+export interface Recording {
+  id: string;
+  bookingId: number;
+  username: string;
+  simulator: "msfs2020" | "msfs2024" | "fsx" | "fsxse" | "p3d" | "xplane";
+  aircraftIdentity: string;
+  status: "recording" | "completed" | "submitted" | "aborted";
+  chunkCount: number;
+  sampleCount: number;
+  acceptedBytes: number;
+  acknowledgedSequences: number[];
+  blockOff: string | null;
+  blockOn: string | null;
+  fuelKg: number | null;
+  manualBlockOff: boolean;
+  manualBlockOn: boolean;
+  manualFuel: boolean;
+  declaredOnline: boolean;
+  flags: string[];
+  pirepId: number | null;
+  createdAt: string;
+  updatedAt: string;
+  completedAt: string | null;
+  rawExpiresAt: string | null;
+  rawAvailable: boolean;
+}
+export interface RecordingPage {
+  items: Recording[];
+  next: string | null;
+}
+export interface PilotProfile {
+  username: string;
+  locationIcao: string;
+  hoursMs: number;
+  flights: number;
+  distanceNm: number;
+  airportsVisited: number;
+  airlinesFlown: number;
+  primaryAirline: AirlineSummary | null;
+  memberships: { airline: AirlineSummary; rank: Rank | null }[];
+  achievements: { code: string; awardedAt: string }[];
+}
+export interface LeaderboardEntry {
+  username: string;
+  hoursMs: number;
+  flights: number;
+  distanceNm: number;
+}
 export const va = {
+  aircraftTypes: () =>
+    api<{ items: AircraftType[] }>("/api/v1/va/aircraft-types"),
+  fleet: (airline: string) =>
+    api<{ items: Aircraft[] }>(`/api/v1/va/airlines/${enc(airline)}/fleet`),
+  acquire: (
+    airline: string,
+    input: {
+      registration: string;
+      typeIcao: string;
+      tenure: string;
+      hubIcao: string;
+      livery: string;
+    },
+  ) =>
+    api<Aircraft>(
+      `/api/v1/va/airlines/${enc(airline)}/fleet`,
+      send("POST", input),
+    ),
+  livery: (airline: string, id: number, livery: string) =>
+    api<Aircraft>(
+      `/api/v1/va/airlines/${enc(airline)}/fleet/${id}`,
+      send("PATCH", { livery }),
+    ),
+  sell: (airline: string, id: number) =>
+    api<null>(
+      `/api/v1/va/airlines/${enc(airline)}/fleet/${id}/sell`,
+      send("POST", {}),
+    ),
+  returnLease: (airline: string, id: number) =>
+    api<null>(
+      `/api/v1/va/airlines/${enc(airline)}/fleet/${id}/return`,
+      send("POST", {}),
+    ),
+  reposition: (airline: string, id: number, destinationIcao: string) =>
+    api<null>(
+      `/api/v1/va/airlines/${enc(airline)}/fleet/${id}/reposition`,
+      send("POST", { destinationIcao }),
+    ),
+  routes: (airline: string) =>
+    api<{ items: Route[] }>(`/api/v1/va/airlines/${enc(airline)}/routes`),
+  createRoute: (
+    airline: string,
+    input: Omit<Route, "id" | "airlineId" | "distanceNm">,
+  ) =>
+    api<Route>(
+      `/api/v1/va/airlines/${enc(airline)}/routes`,
+      send("POST", input),
+    ),
+  updateRoute: (airline: string, id: number, input: Partial<Route>) =>
+    api<Route>(
+      `/api/v1/va/airlines/${enc(airline)}/routes/${id}`,
+      send("PATCH", input),
+    ),
+  deleteRoute: (airline: string, id: number) =>
+    api<null>(
+      `/api/v1/va/airlines/${enc(airline)}/routes/${id}`,
+      send("DELETE"),
+    ),
+  book: (airline: string, input: BookingInput) =>
+    api<Booking>(
+      `/api/v1/va/airlines/${enc(airline)}/bookings`,
+      send("POST", input),
+    ),
+  currentBooking: () => api<Booking | null>("/api/v1/va/me/booking"),
+  bookings: (before: number | null = null) =>
+    api<Page<Booking>>(`/api/v1/va/me/bookings?${pageQuery(before)}`),
+  booking: (id: number) => api<Booking>(`/api/v1/va/bookings/${id}`),
+  cancelBooking: (id: number) =>
+    api<null>(`/api/v1/va/bookings/${id}/cancel`, send("POST", {})),
+  filePirep: (id: number, input: PirepInput) =>
+    api<Pirep>(`/api/v1/va/bookings/${id}/pirep`, send("POST", input)),
+  myPireps: (before: number | null = null) =>
+    api<Page<Pirep>>(`/api/v1/va/me/pireps?${pageQuery(before)}`),
+  pireps: (airline: string, before: number | null = null) =>
+    api<Page<Pirep>>(
+      `/api/v1/va/airlines/${enc(airline)}/pireps?status=pending&${pageQuery(before)}`,
+    ),
+  pirep: (id: number) => api<Pirep>(`/api/v1/va/pireps/${id}`),
+  recording: (id: string, signal?: AbortSignal) =>
+    api<Recording>(`/api/v1/va/recordings/${enc(id)}`, {
+      signal,
+      cache: "no-store",
+    }),
+  recordingTrackUrl: (id: string) => `/api/v1/va/recordings/${enc(id)}/track`,
+  myRecordings: (before: string | null = null, signal?: AbortSignal) =>
+    api<RecordingPage>(
+      `/api/v1/va/me/recordings?limit=20${before ? `&before=${enc(before)}` : ""}`,
+      { signal, cache: "no-store" },
+    ),
+  approvePirep: (id: number) =>
+    api<null>(`/api/v1/va/pireps/${id}/approve`, send("POST", {})),
+  rejectPirep: (id: number, comment: string) =>
+    api<null>(`/api/v1/va/pireps/${id}/reject`, send("POST", { comment })),
+  operations: (airline: string) =>
+    api<Operations>(`/api/v1/va/airlines/${enc(airline)}/operations`),
+  jumpseat: (destinationIcao: string) =>
+    api<null>("/api/v1/va/me/jumpseat", send("POST", { destinationIcao })),
+  freeReturn: () => api<null>("/api/v1/va/me/free-return", send("POST", {})),
+  wallet: (before: number | null = null) =>
+    api<LedgerPage>(`/api/v1/va/me/wallet?${pageQuery(before)}`),
+  profile: (username: string) =>
+    api<PilotProfile>(`/api/v1/va/pilots/${enc(username)}`),
+  leaderboards: (metric: "hours" | "flights", period: "month" | "all") =>
+    api<{ items: LeaderboardEntry[] }>(
+      `/api/v1/va/leaderboards?metric=${metric}&period=${period}`,
+    ),
   setPrimary: (airline: string) =>
     api<Me>("/api/v1/va/me/primary", send("PUT", { airlineIcao: airline })),
 

@@ -24,12 +24,47 @@ const AIRLINE = "[A-Z]{3}";
 const AIRPORT = "[A-Z]{4}";
 const USER = "[A-Za-z0-9_-]{1,32}";
 const ID = "[0-9]{1,10}";
+const UUID =
+  "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
 
 function airline(rest: string): RegExp {
   return new RegExp(`^v1/va/airlines/${AIRLINE}${rest}$`);
 }
 
 export const VA_EXACT: Record<string, Allowed> = {
+  "v1/va/aircraft-types": {
+    methods: ["GET"],
+    who: "FlightOperations.vue — aircraft catalogue",
+  },
+  "v1/va/me/booking": {
+    methods: ["GET"],
+    who: "FlightOperations.vue — current booking",
+  },
+  "v1/va/me/bookings": {
+    methods: ["GET"],
+    who: "FlightOperations.vue — booking history",
+  },
+  "v1/va/me/pireps": {
+    methods: ["GET"],
+    who: "FlightOperations.vue — report history",
+  },
+  "v1/va/me/recordings": {
+    methods: ["GET"],
+    who: "RecordingIndex.vue — owned recording download index",
+  },
+  "v1/va/me/wallet": { methods: ["GET"], who: "PilotOperations.vue — wallet" },
+  "v1/va/me/jumpseat": {
+    methods: ["POST"],
+    who: "PilotOperations.vue — jumpseat",
+  },
+  "v1/va/me/free-return": {
+    methods: ["POST"],
+    who: "PilotOperations.vue — free return",
+  },
+  "v1/va/leaderboards": {
+    methods: ["GET"],
+    who: "PilotOperations.vue — leaderboards",
+  },
   "v1/va/me/primary": {
     methods: ["PUT"],
     who: "MembershipActions.vue —— 设为主要航司",
@@ -65,6 +100,76 @@ export const VA_EXACT: Record<string, Allowed> = {
 };
 
 export const VA_PATTERNS: Array<Allowed & { test: RegExp }> = [
+  {
+    test: new RegExp(`^v1/va/recordings/${UUID}(/track)?$`),
+    methods: ["GET"],
+    who: "RecordingEvidence.vue — authorized recording summary and streamed track",
+  },
+  {
+    test: airline("/fleet"),
+    methods: ["GET", "POST"],
+    who: "FleetManager.vue — fleet",
+  },
+  {
+    test: airline(`/fleet/${ID}`),
+    methods: ["PATCH"],
+    who: "FleetManager.vue — livery",
+  },
+  {
+    test: airline(`/fleet/${ID}/(sell|return|reposition)`),
+    methods: ["POST"],
+    who: "FleetManager.vue — fleet commands",
+  },
+  {
+    test: airline("/routes"),
+    methods: ["GET", "POST"],
+    who: "RoutesManager.vue — routes",
+  },
+  {
+    test: airline(`/routes/${ID}`),
+    methods: ["PATCH", "DELETE"],
+    who: "RoutesManager.vue — route editing",
+  },
+  {
+    test: airline("/bookings"),
+    methods: ["POST"],
+    who: "FlightOperations.vue — booking",
+  },
+  {
+    test: airline("/pireps"),
+    methods: ["GET"],
+    who: "FlightOperations.vue — review queue",
+  },
+  {
+    test: airline("/operations"),
+    methods: ["GET"],
+    who: "FlightOperations.vue — operational deadlines",
+  },
+  {
+    test: new RegExp(`^v1/va/bookings/${ID}$`),
+    methods: ["GET"],
+    who: "FlightOperations.vue — booking detail",
+  },
+  {
+    test: new RegExp(`^v1/va/bookings/${ID}/(cancel|pirep)$`),
+    methods: ["POST"],
+    who: "FlightOperations.vue — cancellation and filing",
+  },
+  {
+    test: new RegExp(`^v1/va/pireps/${ID}$`),
+    methods: ["GET"],
+    who: "FlightOperations.vue — report detail",
+  },
+  {
+    test: new RegExp(`^v1/va/pireps/${ID}/(approve|reject)$`),
+    methods: ["POST"],
+    who: "FlightOperations.vue — independent review",
+  },
+  {
+    test: new RegExp(`^v1/va/pilots/${USER}$`),
+    methods: ["GET"],
+    who: "PilotOperations.vue — pilot profile",
+  },
   {
     test: new RegExp(`^v1/va/airports/${AIRPORT}$`),
     methods: ["GET"],
@@ -182,7 +287,12 @@ export function allowed(path: string): Allowed | undefined {
 const UNSAFE = new Set(["POST", "PATCH", "PUT", "DELETE"]);
 
 /** `set-cookie` 必须在：退出登录靠 can-api 的 Set-Cookie 清会话。 */
-const PASS_THROUGH = ["content-type", "cache-control", "set-cookie"];
+const PASS_THROUGH = [
+  "content-type",
+  "cache-control",
+  "set-cookie",
+  "content-disposition",
+];
 
 const TIMEOUT_MS = 15_000;
 
@@ -190,6 +300,9 @@ const handler: APIRoute = async (context) => {
   const rest = context.params.path ?? "";
   const toCanApi = canApiEntry(rest) !== undefined;
   const entry = allowed(rest);
+  const recordingRoute =
+    rest.startsWith("v1/va/recordings/") || rest === "v1/va/me/recordings";
+  const trackDownload = recordingRoute && rest.endsWith("/track");
 
   if (!entry) {
     return Response.json(
@@ -220,7 +333,9 @@ const handler: APIRoute = async (context) => {
   const upstream = toCanApi ? CAN_API_ORIGIN : CAN_VA_API_ORIGIN;
   const target = `${upstream}/api/${rest}${context.url.search}`;
 
-  const headers = new Headers({ accept: "application/json" });
+  const headers = new Headers({
+    accept: trackDownload ? "application/x-ndjson" : "application/json",
+  });
   const cookie = context.request.headers.get("cookie");
   if (cookie) headers.set("cookie", cookie);
   const contentType = context.request.headers.get("content-type");
@@ -239,7 +354,7 @@ const handler: APIRoute = async (context) => {
       ...(hasBody ? { duplex: "half" } : {}),
       signal: AbortSignal.any([
         context.request.signal,
-        AbortSignal.timeout(TIMEOUT_MS),
+        AbortSignal.timeout(trackDownload ? 300_000 : TIMEOUT_MS),
       ]),
     } as RequestInit);
   } catch (error) {
@@ -257,6 +372,10 @@ const handler: APIRoute = async (context) => {
   for (const name of PASS_THROUGH) {
     const value = response.headers.get(name);
     if (value) out.set(name, value);
+  }
+  if (recordingRoute) {
+    out.set("cache-control", "private, no-store");
+    out.set("referrer-policy", "no-referrer");
   }
   return new Response(response.body, { status: response.status, headers: out });
 };

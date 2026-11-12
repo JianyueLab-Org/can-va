@@ -8,8 +8,9 @@ import { getLocale, getMessages, useTranslations } from "@/lib/i18n";
 import { currentMe } from "@/server/session";
 import { getVa } from "@/server/canVa";
 import { loadAirlinePage } from "@/server/airlinePage";
-import { formatCredits, formatDay } from "@/lib/format";
-import type { Rank } from "@/lib/va";
+import { formatCredits, formatDay, formatUtc } from "@/lib/format";
+import type { Rank, Operations } from "@/lib/va";
+import { can } from "@/lib/permissions";
 
 /** 航司概况：谁都看得到（只有运营中和暂停的航司能打开）。 */
 const me = currentMe(Astro.locals);
@@ -66,10 +67,40 @@ const facts: Array<[string, string, boolean?]> = [
   [t("facts.offline"), a.allowOfflinePireps ? t("allowed") : t("notAllowed")],
   [t("facts.freeFlights"), a.allowFreeFlights ? t("allowed") : t("notAllowed")],
 ];
+const to = useTranslations(locale, "ops");
+const reviewer = can(page.membership, "pireps.review");
+const financial = can(page.membership, "finance.view") || me.isPlatformStaff;
+const operations =
+  reviewer || financial
+    ? await getVa<Operations>(
+        Astro,
+        `/api/v1/va/airlines/${page.icao}/operations`,
+      )
+    : null;
 ---
 
 <AppLayout title={a.name}>
   <AirlineFrame page={page} current="overview">
+    {
+      operations && (
+        <section class="mb-6 grid gap-3 border-b border-subtle pb-5">
+          {reviewer && (
+            <a href={`/airlines/${page.icao}/pireps`} class="underline">
+              {to("pendingCount")}: {operations.pendingCount} · {to("oldest")}:{" "}
+              {operations.oldestPendingAt
+                ? formatUtc(operations.oldestPendingAt)
+                : tc("none")}
+            </a>
+          )}
+          {financial && operations.restructureDeadline && (
+            <p class="text-sm text-danger">
+              {to("restructureDeadline")}:{" "}
+              {formatUtc(operations.restructureDeadline)}
+            </p>
+          )}
+        </section>
+      )
+    }
     <div class="grid gap-6 lg:grid-cols-3">
       <section class="card p-5 lg:col-span-2">
         <h2 class="text-title-3 mb-3 text-ink">{t("about")}</h2>

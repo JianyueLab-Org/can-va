@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { createTranslator } from "@jianyuelab-org/can-ui/i18n";
-import { notificationLine, PHASE1_KINDS } from "./notifications";
+import { notificationLine, NOTIFICATION_KINDS } from "./notifications";
 import { PERMISSIONS } from "./va";
 
 const LOCALES = ["zh-cn", "zh-tw", "en-us", "ja-jp"] as const;
@@ -31,14 +31,24 @@ describe("dictionaries", () => {
     }
   });
 
-  test("every Phase 1 notification kind renders in every locale", () => {
+  test("every notification kind renders in every locale", () => {
     for (const locale of LOCALES) {
       const t = createTranslator(
         dict(locale).notifications as Record<string, unknown>,
       );
-      for (const kind of PHASE1_KINDS) {
+      for (const kind of NOTIFICATION_KINDS) {
         const line = notificationLine(
-          { kind, params: { airline: "CCA", reason: "x" }, path: "/apply" },
+          {
+            kind,
+            params: {
+              airline: "CCA",
+              reason: "x",
+              code: "first_flight",
+              id: 1,
+              deadline: "2026-11-24",
+            },
+            path: "/apply",
+          },
           t,
         );
         expect(line.known).toBe(true);

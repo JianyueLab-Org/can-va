@@ -11,12 +11,18 @@ import type { VaNotification } from "./va";
  * （`va.application.approved` → `kinds.va.application.approved`）。
  */
 
-export const PHASE1_KINDS = [
+export const NOTIFICATION_KINDS = [
   "va.application.approved",
   "va.application.rejected",
   "va.membership.accepted",
   "va.membership.declined",
   "va.membership.invited",
+  "va.pirep.approved",
+  "va.pirep.rejected",
+  "va.restructuring.started",
+  "va.restructuring.warning",
+  "va.restructuring.done",
+  "va.achievement.awarded",
 ] as const;
 
 export interface NotificationLine {
@@ -60,7 +66,13 @@ export function notificationLine(
   const href = safePath(n.path);
   const key = `kinds.${n.kind}`;
   // 翻译器找不到字符串时原样返回键 —— 那就是「字典里没有」。
-  const text = KIND.test(n.kind) ? t(key, n.params) : key;
+  const params = { ...n.params };
+  if (n.kind === "va.achievement.awarded" && typeof params.code === "string") {
+    const achievementKey = `achievementNames.${params.code}`;
+    const label = t(achievementKey);
+    if (label !== achievementKey) params.code = label;
+  }
+  const text = KIND.test(n.kind) ? t(key, params) : key;
   if (text !== key) return { text, href, known: true };
   return { text: t("generic"), href, known: false };
 }

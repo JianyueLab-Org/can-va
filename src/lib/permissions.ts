@@ -85,7 +85,16 @@ export function canRemoveMember(
 }
 
 export type AirlineSection =
-  "overview" | "members" | "roles" | "ranks" | "manage" | "finance";
+  | "overview"
+  | "members"
+  | "roles"
+  | "ranks"
+  | "manage"
+  | "finance"
+  | "fleet"
+  | "routes"
+  | "book"
+  | "pireps";
 
 /** 航司页顶上的分页标签：成员和角色要是活跃成员，设置和财务看权限。 */
 export function airlineSections(
@@ -100,9 +109,14 @@ export function airlineSections(
     out.push(
       { key: "members", href: `${base}/members` },
       { key: "roles", href: `${base}/roles` },
+      { key: "fleet", href: `${base}/fleet` },
+      { key: "routes", href: `${base}/routes` },
+      { key: "book", href: `${base}/book` },
     );
   }
   out.push({ key: "ranks", href: `${base}/ranks` });
+  if (can(m, "pireps.review"))
+    out.push({ key: "pireps", href: `${base}/pireps` });
   if (can(m, "airline.edit"))
     out.push({ key: "manage", href: `${base}/manage` });
   if (can(m, "finance.view")) {

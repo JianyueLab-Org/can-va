@@ -1,0 +1,41 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import FlightOperations from "@/components/FlightOperations.vue";
+import RecordingIndex from "@/components/RecordingIndex.vue";
+import { getLocale, getMessages, useTranslations } from "@/lib/i18n";
+import { currentMe } from "@/server/session";
+import { getVa } from "@/server/canVa";
+import type { Booking, Pirep, Page, Airline } from "@/lib/va";
+const me = currentMe(Astro.locals),
+  locale = getLocale(Astro.cookies),
+  t = useTranslations(locale, "ops");
+const [current, history, reports] = await Promise.all([
+  getVa<Booking>(Astro, "/api/v1/va/me/booking"),
+  getVa<Page<Booking>>(Astro, "/api/v1/va/me/bookings"),
+  getVa<Page<Pirep>>(Astro, "/api/v1/va/me/pireps"),
+]);
+const airline = current
+  ? await getVa<Airline>(Astro, `/api/v1/va/airlines/${current.airlineIcao}`)
+  : null;
+---
+
+<AppLayout title={t("flights")}
+  ><PageHeader title={t("flights")} /><FlightOperations
+    username={me.username}
+    location={me.pilot?.locationIcao ?? null}
+    current={current}
+    history={history ?? { items: [], next: null }}
+    reports={reports ?? { items: [], next: null }}
+    allowOffline={airline?.allowOfflinePireps ?? false}
+    locale={locale}
+    messages={getMessages(locale, "ops")}
+    common={getMessages(locale, "common")}
+    client:load
+  />
+  <RecordingIndex
+    messages={getMessages(locale, "ops")}
+    common={getMessages(locale, "common")}
+    client:load
+  /></AppLayout
+>

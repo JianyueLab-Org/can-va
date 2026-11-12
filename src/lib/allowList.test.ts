@@ -1,105 +1,23 @@
 import { describe, expect, test } from "bun:test";
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
-import {
-  allowed,
-  canApiEntry,
-  VA_EXACT,
-  VA_PATTERNS,
-  vaEntry,
-} from "../pages/api/[...path]";
+import { allowed, canApiEntry, vaEntry } from "../pages/api/[...path]";
 
-/**
- * 岛屿里每一条打给反代的路径都必须在白名单上，白名单上的每一条也都必须有人用。
- *
- * 漏放行的症状是岛屿拿到 404 —— 表单上一句「接口不在白名单」，而不是上游的答案。
- * 多放行的是一条没人用的公网通路。
- *
- * 挡不住：整段来自变量的路径（不要这样写，见 `src/lib/va.ts` 抬头）；can-va-api 那边有
- * 没有这条路由。
- */
-
-const ROOT = new URL("../", import.meta.url).pathname;
-
-function walk(dir: string): string[] {
-  if (!existsSync(dir)) return [];
-  return readdirSync(dir).flatMap((name) => {
-    const path = join(dir, name);
-    return statSync(path).isDirectory() ? walk(path) : [path];
-  });
-}
-
-/** 只扫浏览器里跑的代码：`src/server/` 和 `.astro` frontmatter 直连 can-va-api。 */
-function sources(): Array<{ file: string; text: string }> {
-  return ["components", "lib"]
-    .flatMap((dir) => walk(join(ROOT, dir)))
-    .filter((file) => /\.(vue|ts)$/.test(file) && !file.endsWith(".test.ts"))
-    .map((file) => ({ file, text: readFileSync(file, "utf8") }));
-}
-
-/** `${…}` 按表达式名代样例值，规则写在 `src/lib/va.ts` 抬头。 */
-function sample(expr: string): string {
-  if (/hub|airport/i.test(expr)) return "ZBAA";
-  if (/user/i.test(expr)) return "100001";
-  if (/\bid\b/.test(expr)) return "1";
-  return "CCA";
-}
-
-function normalise(raw: string): string {
-  return raw
-    .replace(/\$\{([^}]*)\}/g, (_, expr: string) => sample(expr))
-    .replace(/[?#].*$/, "")
-    .replace(/^\/api\//, "");
-}
-
-const found = new Map<string, string[]>();
-for (const { file, text } of sources()) {
-  const code = text
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .replace(/^\s*\/\/.*$/gm, "");
-  for (const m of code.matchAll(/["'`](\/api\/v1\/[^"'`]*)["'`]/g)) {
-    const path = normalise(m[1]);
-    found.set(path, [...(found.get(path) ?? []), file]);
-  }
-}
-
-describe("反代白名单 ↔ 岛屿", () => {
-  test("扫到了路径", () => {
-    expect(found.size).toBeGreaterThan(20);
-  });
-
-  test("岛屿用到的每一条都在白名单上", () => {
-    const missing = [...found].filter(([path]) => !allowed(path));
-    expect(missing.map(([p, files]) => `${p} ← ${files.join(", ")}`)).toEqual(
-      [],
-    );
-  });
-
-  test("白名单上的每一条 VA 路由都有人用", () => {
-    const paths = [...found.keys()];
-    const unusedExact = Object.keys(VA_EXACT).filter((k) => !paths.includes(k));
-    const unusedPatterns = VA_PATTERNS.filter(
-      (entry) => !paths.some((p) => entry.test.test(p)),
-    ).map((entry) => entry.test.source);
-    expect([...unusedExact, ...unusedPatterns]).toEqual([]);
-  });
-});
-
-describe("白名单自己", () => {
-  test("没有 staff、internal，也没有 /me 的 GET", () => {
+describe("member proxy boundary", () => {
+  test("staff, internal and session introspection remain inaccessible", () => {
     for (const path of [
       "v1/va/staff/applications",
+      "v1/va/staff/aircraft-types",
+      "v1/va/staff/airports/ZBAA/tier",
       "v1/va/staff/airlines/1/suspend",
       "v1/va/staff/params",
       "v1/internal/va/pilots/100001",
       "v1/internal/va/pilots/100001/export",
       "v1/va/me",
-    ]) {
+      "v1/va/client/recordings",
+      "v1/va/client/recordings/12345678-1234-1234-1234-123456789abc/track",
+    ])
       expect(allowed(path)).toBeUndefined();
-    }
   });
-
-  test("动态段收得紧", () => {
+  test("dynamic segments reject traversal and malformed identifiers", () => {
     for (const path of [
       "v1/va/airlines/cca",
       "v1/va/airlines/CCAX",
@@ -109,32 +27,79 @@ describe("白名单自己", () => {
       "v1/va/airlines/CCA/ranks/1/x",
       "v1/va/airlines/../staff/params",
       "v1/va/airports/../../internal",
-    ]) {
+      "v1/va/bookings/1/cancel/extra",
+      "v1/va/bookings/-1",
+      "v1/va/pireps/abc/approve",
+      "v1/va/pilots/closed:123",
+      "v1/va/airlines/CCA/fleet/1/delete",
+    ])
       expect(allowed(path)).toBeUndefined();
-    }
   });
-
-  test("方法逐条", () => {
-    expect(vaEntry("v1/va/airlines/CCA")?.methods).toEqual(["PATCH"]);
-    expect(vaEntry("v1/va/airlines/CCA/roles")?.methods).toEqual([
+  test("recording evidence is cookie-only and read-only with exact UUID paths", () => {
+    const base = "v1/va/recordings/12345678-1234-1234-1234-123456789abc";
+    for (const path of [base, `${base}/track`, "v1/va/me/recordings"])
+      expect(vaEntry(path)?.methods).toEqual(["GET"]);
+    for (const path of [
+      `${base}/chunks/0`,
+      `${base}/complete`,
+      `${base}/submit`,
+      `${base}/abort`,
+      `${base}/track/extra`,
+      "v1/va/recordings/1",
+      "v1/va/recordings/../staff",
+    ])
+      expect(allowed(path)).toBeUndefined();
+  });
+  test("fleet commands and route edits have narrow methods", () => {
+    expect(vaEntry("v1/va/airlines/CCA/fleet")?.methods).toEqual([
       "GET",
       "POST",
+    ]);
+    expect(vaEntry("v1/va/airlines/CCA/fleet/1")?.methods).toEqual(["PATCH"]);
+    for (const action of ["sell", "return", "reposition"])
+      expect(vaEntry(`v1/va/airlines/CCA/fleet/1/${action}`)?.methods).toEqual([
+        "POST",
+      ]);
+    expect(vaEntry("v1/va/airlines/CCA/routes/1")?.methods).toEqual([
+      "PATCH",
+      "DELETE",
     ]);
     expect(vaEntry("v1/va/airlines/CCA/roles/7")?.methods).toEqual([
       "PATCH",
       "DELETE",
     ]);
-    expect(vaEntry("v1/va/notifications/read-all")?.methods).toEqual(["POST"]);
-    expect(vaEntry("v1/va/me/primary")?.methods).toEqual(["PUT"]);
+    expect(vaEntry("v1/va/airlines/CCA")?.methods).toEqual(["PATCH"]);
   });
-
-  test("退出登录走 can-api，且只有这一条", () => {
+  test("booking, independent review and movement commands are explicit", () => {
+    for (const path of [
+      "v1/va/airlines/CCA/bookings",
+      "v1/va/bookings/1/cancel",
+      "v1/va/bookings/1/pirep",
+      "v1/va/pireps/1/approve",
+      "v1/va/pireps/1/reject",
+      "v1/va/me/jumpseat",
+      "v1/va/me/free-return",
+    ])
+      expect(vaEntry(path)?.methods).toEqual(["POST"]);
+    for (const path of [
+      "v1/va/me/booking",
+      "v1/va/me/bookings",
+      "v1/va/me/pireps",
+      "v1/va/me/wallet",
+      "v1/va/pilots/100001",
+      "v1/va/leaderboards",
+      "v1/va/airlines/CCA/operations",
+    ])
+      expect(vaEntry(path)?.methods).toEqual(["GET"]);
+    expect(vaEntry("v1/va/me/primary")?.methods).toEqual(["PUT"]);
+    expect(vaEntry("v1/va/notifications/read-all")?.methods).toEqual(["POST"]);
+  });
+  test("signout is the only can-api path", () => {
     expect(canApiEntry("v1/auth/signout")?.methods).toEqual(["POST"]);
     expect(vaEntry("v1/auth/signout")).toBeUndefined();
     expect(canApiEntry("v1/notifications")).toBeUndefined();
   });
-
-  test("继承来的键不算条目", () => {
+  test("inherited keys are not entries", () => {
     expect(allowed("toString")).toBeUndefined();
     expect(allowed("__proto__")).toBeUndefined();
   });

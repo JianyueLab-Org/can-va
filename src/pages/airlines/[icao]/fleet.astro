@@ -1,0 +1,40 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import AirlineFrame from "@/components/AirlineFrame.astro";
+import Manager from "@/components/FleetManager.vue";
+import { getLocale, getMessages, useTranslations } from "@/lib/i18n";
+import { currentMe } from "@/server/session";
+import { getVa } from "@/server/canVa";
+import { loadAirlinePage } from "@/server/airlinePage";
+import { can, isActiveMember } from "@/lib/permissions";
+import type { Aircraft, AircraftType } from "@/lib/va";
+const me = currentMe(Astro.locals),
+  page = await loadAirlinePage(Astro, Astro.params.icao, me);
+if (!page || !isActiveMember(page.membership)) return Astro.rewrite("/404");
+const locale = getLocale(Astro.cookies),
+  t = useTranslations(locale, "ops");
+const data = await getVa<{ items: Aircraft[] }>(
+  Astro,
+  `/api/v1/va/airlines/${page.icao}/fleet`,
+);
+const types = await getVa<{ items: AircraftType[] }>(
+  Astro,
+  "/api/v1/va/aircraft-types",
+);
+---
+
+<AppLayout title={t("fleet")}
+  ><AirlineFrame page={page} current="fleet"
+    ><Manager
+      icao={page.icao}
+      fleet={data?.items ?? []}
+      hubs={page.airline.hubs}
+      locale={locale}
+      types={types?.items ?? []}
+      manage={can(page.membership, "fleet.manage")}
+      messages={getMessages(locale, "ops")}
+      common={getMessages(locale, "common")}
+      client:load
+    /></AirlineFrame
+  ></AppLayout
+>

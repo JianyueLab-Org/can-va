@@ -174,6 +174,9 @@ describe("airlineSections", () => {
       "overview",
       "members",
       "roles",
+      "fleet",
+      "routes",
+      "book",
       "ranks",
     ]);
     const owner = airlineSections("CCA", membership({ isOwner: true }));
@@ -181,7 +184,11 @@ describe("airlineSections", () => {
       "/airlines/CCA",
       "/airlines/CCA/members",
       "/airlines/CCA/roles",
+      "/airlines/CCA/fleet",
+      "/airlines/CCA/routes",
+      "/airlines/CCA/book",
       "/airlines/CCA/ranks",
+      "/airlines/CCA/pireps",
       "/airlines/CCA/manage",
       "/airlines/CCA/finance",
     ]);

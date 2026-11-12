@@ -1,11 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { createTranslator } from "@jianyuelab-org/can-ui/i18n";
-import {
-  markReadUpTo,
-  notificationLine,
-  PHASE1_KINDS,
-  safePath,
-} from "./notifications";
+import { markReadUpTo, notificationLine, safePath } from "./notifications";
 import type { VaNotification } from "./va";
 
 const t = createTranslator({
@@ -73,14 +68,26 @@ describe("safePath", () => {
   });
 });
 
-test("the five Phase 1 kinds", () => {
-  expect([...PHASE1_KINDS]).toEqual([
-    "va.application.approved",
-    "va.application.rejected",
-    "va.membership.accepted",
-    "va.membership.declined",
-    "va.membership.invited",
-  ]);
+test("achievement notifications render the translated achievement name", () => {
+  const translated = createTranslator({
+    generic: "New notification",
+    achievementNames: { first_flight: "First approved flight" },
+    kinds: { va: { achievement: { awarded: "Achievement: {code}" } } },
+  });
+  expect(
+    notificationLine(
+      {
+        kind: "va.achievement.awarded",
+        params: { code: "first_flight" },
+        path: "/pilots/100001",
+      },
+      translated,
+    ),
+  ).toEqual({
+    text: "Achievement: First approved flight",
+    href: "/pilots/100001",
+    known: true,
+  });
 });
 
 describe("markReadUpTo", () => {

@@ -7,7 +7,7 @@ import { currentMe } from "@/server/session";
 import { getVa } from "@/server/canVa";
 import { loadAirlinePage } from "@/server/airlinePage";
 import { can } from "@/lib/permissions";
-import type { Rank } from "@/lib/va";
+import type { Rank, AircraftType } from "@/lib/va";
 
 /** 等级表谁都看得到；改要 `ranks.manage`。 */
 const me = currentMe(Astro.locals);
@@ -20,6 +20,10 @@ const ranks = await getVa<{ items: Rank[] }>(
   Astro,
   `/api/v1/va/airlines/${page.icao}/ranks`,
 );
+const types = await getVa<{ items: AircraftType[] }>(
+  Astro,
+  "/api/v1/va/aircraft-types",
+);
 ---
 
 <AppLayout title={`${t("title")} · ${page.airline.name}`}>
@@ -29,6 +33,7 @@ const ranks = await getVa<{ items: Rank[] }>(
       locale={locale}
       canManage={can(page.membership, "ranks.manage")}
       ranks={ranks?.items ?? []}
+      types={types?.items ?? []}
       messages={getMessages(locale, "ranks")}
       common={getMessages(locale, "common")}
       client:load
